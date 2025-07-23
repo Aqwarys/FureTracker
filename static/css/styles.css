@@ -1,0 +1,44 @@
+body {
+    font-family: 'Helvetica Neue', sans-serif;
+    color: #333;
+    background-color: #fff;
+}
+
+.navbar-brand {
+    font-size: 28px;
+    letter-spacing: 2px;
+}
+
+.nav-link {
+    color: #000 !important;
+    font-weight: 500;
+}
+
+.nav-link:hover {
+    color: #777 !important;
+}
+
+.social-icons a {
+    color: #777;
+    font-size: 14px;
+}
+
+.main-header {
+    background-color: #f9f9f9;
+}
+
+footer h6 {
+    font-weight: 600;
+}
+
+footer p {
+    margin: 0;
+}
+
+footer input[type="email"] {
+    border-radius: 0;
+}
+
+footer button {
+    border-radius: 0;
+}
