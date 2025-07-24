@@ -42,3 +42,30 @@ footer input[type="email"] {
 footer button {
     border-radius: 0;
 }
+
+
+
+
+/* Orders */
+body {
+    font-family: 'Helvetica Neue', sans-serif; /* Your preferred font */
+    color: #333;
+    background-color: #f0f2f5; /* Light grey background from the example */
+}
+
+/* Ensure Font Awesome is properly loaded from base.html */
+/* <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> */
+
+/* Basic button styles if you need to override Bootstrap defaults */
+.btn-dark {
+    background-color: #343a40; /* Your current dark button color */
+    border-color: #343a40;
+    color: #fff;
+}
+.btn-dark:hover {
+    background-color: #495057;
+    border-color: #495057;
+    color: #fff;
+}
+
+

@@ -7,7 +7,7 @@ class Order(models.Model):
     client_email = models.EmailField(max_length=100, blank=False, null=False)
     client_phone = models.CharField(max_length=100, blank=False, null=False)
     access_token = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
-    order_number = models.CharField(max_length=100, blank=False, null=False, unique=True)
+    order_number = models.CharField(max_length=100, blank=True, null=True, unique=True)
     description = models.TextField(blank=False, null=False)
     order_status = models.ForeignKey(OrderStatus, on_delete=models.PROTECT)
     updated_at = models.DateTimeField(auto_now=True)
@@ -18,6 +18,22 @@ class Order(models.Model):
         verbose_name = 'Заказ'
         verbose_name_plural = 'Заказы'
         ordering = ['-created_at']
+
+    def save(self, *args, **kwargs):
+        # Если это новый объект (нет id) и order_number не установлен
+        if self.order_status.name == 'Завершен':
+            self.is_completed = True
+        else:
+            self.is_completed = False
+        if not self.id and not self.order_number:
+            super().save(*args, **kwargs)  # Сначала сохраняем, чтобы получить id
+            # Теперь используем id для генерации номера заказа
+            # Например, "ORD-000001", "KZ-001234", "МБЛ-0005"
+            self.order_number = f"ORD-{self.id:06d}" # Форматируем id до 6 знаков с ведущими нулями
+        super().save(*args, **kwargs) # Повторно сохраняем (если это был новый объект) или просто сохраняем изменения
+
+    def __str__(self):
+        return self.order_number or f"Заказ без номера ({self.id})" # Для отображения в админке до сохранения номера
 
 class OrderMedia(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='media_items')

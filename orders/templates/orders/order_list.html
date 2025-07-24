@@ -1,0 +1,369 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Ваши Заказы{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Custom Styles for LuckyJob-inspired design */
+    body {
+        background-color: #f0f2f5; /* Very light grey background for content area */
+    }
+
+    .main-content-section {
+        background-color: #f0f2f5;
+        padding-top: 3rem;
+        padding-bottom: 3rem;
+    }
+
+    .sidebar {
+        background-color: #ffffff;
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); /* Softer shadow */
+        margin-bottom: 2rem; /* Spacing for mobile */
+    }
+
+    .sidebar h5 {
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        color: #333;
+    }
+
+    .sidebar .form-check {
+        margin-bottom: 0.75rem;
+    }
+
+    .sidebar .form-check-input:checked {
+        background-color: #007bff; /* Primary brand color */
+        border-color: #007bff;
+    }
+    .sidebar .form-check-label {
+        font-size: 0.95rem;
+        color: #555;
+    }
+
+    .content-area-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .content-area-header h2 {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .sort-by-dropdown .dropdown-toggle {
+        background-color: transparent;
+        border: 1px solid #ced4da;
+        color: #495057;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-size: 0.9rem;
+    }
+
+    .order-card {
+        background-color: #ffffff;
+        border: none;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        margin-bottom: 1.5rem; /* Spacing between cards */
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .order-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-meta-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        font-size: 0.85rem;
+        color: #777;
+    }
+
+    .card-meta-top .date {
+        font-weight: 500;
+    }
+
+    .order-card-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+
+    .order-card-description {
+        font-size: 0.95rem;
+        color: #555;
+        margin-bottom: 1rem;
+    }
+
+    .order-details-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem; /* Spacing between badges/info */
+        margin-bottom: 1.5rem;
+    }
+
+    .detail-badge {
+        background-color: #e9ecef; /* Light grey background */
+        color: #6c757d;
+        padding: 0.4rem 0.8rem;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+
+    /* Custom status badges based on example's colored tags */
+    .status-badge {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.85em;
+        display: inline-block; /* To allow padding/margin */
+    }
+
+    .status-completed {
+        background-color: #d4edda; /* Light green */
+        color: #28a745; /* Darker green text */
+    }
+
+    .status-in-progress {
+        background-color: #fff3cd; /* Light yellow */
+        color: #ffc107; /* Darker yellow text */
+    }
+
+    .status-canceled {
+        background-color: #f8d7da; /* Light red */
+        color: #dc3545; /* Darker red text */
+    }
+
+    .card-footer-actions {
+        margin-top: auto; /* Pushes content to bottom */
+        padding-top: 1.5rem;
+        border-top: 1px solid #e9ecef;
+        display: flex;
+        justify-content: flex-end; /* Push button to the right */
+    }
+
+    .btn-details {
+        background-color: #343a40; /* Dark button color from your header */
+        color: #fff;
+        border-radius: 8px;
+        padding: 0.6rem 1.5rem;
+        font-weight: 500;
+        transition: background-color 0.2s ease-in-out;
+    }
+
+    .btn-details:hover {
+        background-color: #495057;
+        color: #fff;
+    }
+
+    /* Pagination styles similar to buttons */
+    .pagination .page-item .page-link {
+        border-radius: 8px !important;
+        margin: 0 0.2rem;
+        border-color: #dee2e6;
+        color: #495057;
+        font-weight: 500;
+        min-width: 40px; /* Ensure uniform button width */
+        text-align: center;
+    }
+    .pagination .page-item.active .page-link {
+        background-color: #343a40 !important; /* Use the dark button color for active */
+        border-color: #343a40 !important;
+        color: #fff;
+    }
+    .pagination .page-item .page-link:hover {
+        background-color: #e9ecef;
+        color: #343a40;
+    }
+    .pagination .page-item.disabled .page-link {
+        background-color: #f8f9fa;
+        color: #adb5bd;
+    }
+
+    @media (max-width: 767.98px) {
+        .content-area-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .content-area-header h2 {
+            margin-bottom: 1rem;
+        }
+        .sort-by-dropdown {
+            width: 100%;
+        }
+        .order-card {
+            padding: 1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="main-content-section">
+    <div class="container">
+        <div class="row">
+            {# Левая панель с фильтрами (пока пустая, но готова для расширения) #}
+            <div class="col-lg-3 d-none d-lg-block"> {# Скрыть на мобильных, показать на больших экранах #}
+                <div class="sidebar">
+                    <h5>Фильтры</h5>
+                    <div class="mb-4">
+                        <h6>Статус заказа</h6>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="filterStatus1">
+                            <label class="form-check-label" for="filterStatus1">
+                                В процессе
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="filterStatus2">
+                            <label class="form-check-label" for="filterStatus2">
+                                Завершен
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="filterStatus3">
+                            <label class="form-check-label" for="filterStatus3">
+                                Новый
+                            </label>
+                        </div>
+                        {# Добавьте другие статусы по мере необходимости #}
+                    </div>
+
+                    <div class="mb-4">
+                        <h6>Диапазон дат</h6>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="dateRange" id="filterDate1" checked>
+                            <label class="form-check-label" for="filterDate1">
+                                За все время
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="dateRange" id="filterDate2">
+                            <label class="form-check-label" for="filterDate2">
+                                Последние 30 дней
+                            </label>
+                        </div>
+                        {# Можно добавить кастомные поля для выбора дат #}
+                    </div>
+                    {# Здесь можно добавить другие группы фильтров: по клиенту, по описанию и т.д. #}
+                </div>
+            </div>
+
+            {# Правая область с карточками заказов #}
+            <div class="col-lg-9">
+                <div class="content-area-header">
+                    <h2>Заказы <span class="text-muted fw-normal ms-2">{{ orders.paginator.count }}</span></h2>
+                    <div class="sort-by-dropdown dropdown">
+                        <button class="btn dropdown-toggle" type="button" id="dropdownSortBy" data-bs-toggle="dropdown" aria-expanded="false">
+                            Сортировать по: Последнее обновление <i class="fas fa-filter ms-2"></i>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownSortBy">
+                            <li><a class="dropdown-item" href="#">Дате создания</a></li>
+                            <li><a class="dropdown-item" href="#">Статусу</a></li>
+                            <li><a class="dropdown-item" href="#">Имени клиента</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                {% if orders %}
+                <div class="row">
+                    {% for order in orders %}
+                    <div class="col-md-6"> {# Карточки по 2 в ряд на средних/больших экранах #}
+                        <div class="card order-card">
+                            <div class="card-meta-top">
+                                <span class="date">{{ order.created_at|date:"d M Y" }}</span>
+                            </div>
+                            <h5 class="order-card-title">Заказ {{ order.order_number }}</h5>
+                            <p class="order-card-description">{{ order.description|default:"Описание отсутствует."|truncatechars:60 }}</p>
+
+                            {% comment %} <div class="order-details-meta">
+                                <span class="detail-badge"><i class="fas fa-user-circle me-1"></i> {{ order.client_name }}</span>
+                                <span class="detail-badge"><i class="fas fa-phone me-1"></i> {{ order.client_phone }}</span>
+                                <span class="detail-badge"><i class="fas fa-envelope me-1"></i> {{ order.client_email }}</span>
+                            </div> {% endcomment %}
+
+                            <span class="status-badge {% if order.is_completed %}status-completed{% elif order.order_status.name == 'Отменен' %}status-canceled{% else %}status-in-progress{% endif %}">
+                                <i class="fas fa-info-circle me-1"></i> Статус: {{ order.order_status.name }}
+                            </span>
+
+                            <div class="card-footer-actions">
+                                {# Убедитесь, что 'order_personal_access' URL настроен в orders/urls.py #}
+                                <a href="{% url "orders:public_order_detail" order.order_number %}" class="btn btn-details">
+                                    Подробнее <i class="fas fa-arrow-right ms-2"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="col-12">
+                        <div class="alert alert-info text-center py-5" role="alert">
+                            <h4 class="alert-heading display-6 mb-3">Заказов пока нет!</h4>
+                            <p class="lead mb-4">На данный момент нет активных заказов для отображения. Возможно, вы ищете свою персональную страницу заказа.</p>
+                            <hr>
+                            <p class="mb-0">Если у вас есть номер заказа и персональный токен, воспользуйтесь функцией отслеживания заказа.</p>
+                            {# <a href="{% url 'order_tracking' %}" class="btn btn-outline-info mt-3">Отследить мой заказ</a> #}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                {# Пагинация #}
+                {% if orders.has_other_pages %}
+                <nav aria-label="Навигация по страницам" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        {% if orders.has_previous %}
+                            <li class="page-item"><a class="page-link" href="?page={{ orders.previous_page_number }}"><i class="fas fa-chevron-left"></i></a></li>
+                        {% else %}
+                            <li class="page-item disabled"><span class="page-link"><i class="fas fa-chevron-left"></i></span></li>
+                        {% endif %}
+
+                        {% for i in orders.paginator.page_range %}
+                            {% if orders.number == i %}
+                                <li class="page-item active" aria-current="page"><span class="page-link">{{ i }}</span></li>
+                            {% else %}
+                                <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if orders.has_next %}
+                            <li class="page-item"><a class="page-link" href="?page={{ orders.next_page_number }}"><i class="fas fa-chevron-right"></i></a></li>
+                        {% else %}
+                            <li class="page-item disabled"><span class="page-link"><i class="fas fa-chevron-right"></i></span></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+
+                {% endif %} {# End of if orders #}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    });
+});
+</script>
+{% endblock %}

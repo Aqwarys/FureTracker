@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мой заказ: {{ order.order_number }}</title>
+</head>
+<body>
+    <h1>Ваш заказ №{{ order.order_number }}</h1>
+    <p>Статус: {{ order.order_status.name }}</p>
+    <p>Описание: {{ order.description }}</p>
+    <p>Последнее обновление: {{ order.updated_at|date:"d.m.Y H:i" }}</p>
+
+    {# Django messages #}
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <h3>Медиафайлы заказа по этапам:</h3>
+    {% if media_by_stage %}
+        {% for stage, media_list in media_by_stage.items %}
+            <h4>Этап: {{ stage.name }}</h4>
+            {% if media_list %}
+                <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                    {% for media in media_list %}
+                        {% if media.file.url %}
+                            <img src="{{ media.file.url }}" alt="Медиа" style="max-width: 200px; height: auto;">
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>Нет медиафайлов для этого этапа.</p>
+            {% endif %}
+        {% endfor %}
+    {% else %}
+        <p>Нет медиафайлов для этого заказа.</p>
+    {% endif %}
+
+    <h3>Ваши комментарии:</h3>
+    {% if comments %}
+        {% for comment in comments %}
+            <p><strong>{{ comment.author_name }}:</strong> {{ comment.text }} ({{ comment.created_at|date:"d.m.Y H:i" }})</p>
+        {% endfor %}
+    {% else %}
+        <p>Вы еще не оставляли комментариев.</p>
+    {% endif %}
+
+    {% if not has_review %}
+        <h3>Оставить отзыв о заказе:</h3>
+        <form method="post">
+            {% csrf_token %}
+            {{ review_form.as_p }} {# Отображает поля формы отзыва #}
+            <button type="submit" name="submit_review">Отправить отзыв</button>
+        </form>
+    {% else %}
+        <h3>Ваш отзыв:</h3>
+        <p>Рейтинг: {{ existing_review.rating }} ⭐</p>
+        <p>Текст: {{ existing_review.text }}</p>
+        {% if not existing_review.is_published %}
+            <p style="color: orange;">Ваш отзыв находится на модерации.</p>
+        {% endif %}
+    {% endif %}
+
+    <h3>Оставить новый комментарий:</h3>
+    <form method="post">
+        {% csrf_token %}
+        {# author_name будет автоматически заполнен в view, здесь его нет #}
+        {{ comment_form.as_p }} {# Отображает поля формы комментария #}
+        <button type="submit" name="submit_comment">Отправить комментарий</button>
+    </form>
+
+</body>
+</html>

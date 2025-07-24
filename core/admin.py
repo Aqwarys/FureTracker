@@ -1,3 +1,9 @@
 from django.contrib import admin
+from core.models import OrderStatus
 
-# Register your models here.
+@admin.register(OrderStatus)
+class OrderStatusAdmin(admin.ModelAdmin):
+    list_display = ('name', 'order_index')
+    ordering = ['order_index']
+    search_fields = ['name']
+    list_filter = ['order_index']
