@@ -75,6 +75,12 @@
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
         margin-bottom: 1.5rem;
         transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+
+        height: 300px; /* фиксируем общую высоту */
     }
     .order-card:hover {
         transform: translateY(-3px);
@@ -97,6 +103,12 @@
         font-size: 0.95rem;
         color: #555;
         margin-bottom: 1rem;
+        flex-grow: 1; /* занимает свободное пространство */
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 3; /* показывать 3 строки */
+        -webkit-box-orient: vertical;
     }
 
     .status-badge {
@@ -121,10 +133,10 @@
 
     .card-footer-actions {
         margin-top: auto;
-        padding-top: 1.5rem;
-        border-top: 1px solid #e9ecef;
+        padding-top: 1rem; /* можно оставить отступ */
         display: flex;
         justify-content: flex-end;
+        border: none; /* убираем линию */
     }
     .btn-details {
         background-color: #343a40;
@@ -218,46 +230,45 @@
 
 
                 {% if orders %}
-    <div class="row">
-        {% for order in orders %}
-        <div class="col-md-6">
-            <div class="order-card">
-                <div class="card-meta-top">
-                    <span class="date">{{ order.created_at|date:"d M Y" }}</span>
-                </div>
-                <h5 class="order-card-title">Заказ {{ order.order_number }}</h5>
-                <p class="order-card-description">
-                    {{ order.description|default:"Описание отсутствует."|truncatechars:60 }}
-                </p>
+                    <div class="row">
+                        {% for order in orders %}
+                        <div class="col-md-6">
+                            <div class="order-card">
+                                <div class="card-meta-top">
+                                    <span class="date">{{ order.created_at|date:"d M Y" }}</span>
+                                </div>
+                                <h5 class="order-card-title">Заказ {{ order.order_number }}</h5>
+                                <p class="order-card-description">
+                                    {{ order.description|default:"Описание отсутствует."|truncatechars:60 }}
+                                </p>
 
-                <span class="status-badge
-                    {% if order.is_completed %}status-completed
-                    {% elif order.order_status.name == 'Отменен' %}status-canceled
-                    {% else %}status-in-progress{% endif %}">
-                    Статус: {{ order.order_status.name }}
-                </span>
+                                <span class="status-badge
+                                    {% if order.is_completed %}status-completed
+                                    {% elif order.order_status.name == 'Отменен' %}status-canceled
+                                    {% else %}status-in-progress{% endif %}">
+                                    Статус: {{ order.order_status.name }}
+                                </span>
 
-                <div class="card-footer-actions">
-                    <a href="{% url 'orders:public_order_detail' order.order_number %}" class="btn btn-details">
-                        Подробнее <i class="fas fa-arrow-right ms-2"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-        {% empty %}
-        <div class="col-12">
-            <div class="alert alert-info text-center py-5" role="alert">
-                <h4 class="alert-heading display-6 mb-3">Заказов нет</h4>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-{% else %}
-    <div class="alert alert-info text-center py-5" role="alert">
-        <h4 class="alert-heading display-6 mb-3">Заказов пока нет!</h4>
-    </div>
-{% endif %}
-
+                                <div class="card-footer-actions">
+                                    <a href="{% url 'orders:public_order_detail' order.order_number %}" class="btn btn-details">
+                                        Подробнее <i class="fas fa-arrow-right ms-2"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="col-12">
+                            <div class="alert alert-info text-center py-5" role="alert">
+                                <h4 class="alert-heading display-6 mb-3">Заказов нет</h4>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="alert alert-info text-center py-5" role="alert">
+                        <h4 class="alert-heading display-6 mb-3">Заказов пока нет!</h4>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>
