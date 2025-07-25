@@ -5,9 +5,8 @@
 
 {% block extra_head %}
 <style>
-    /* Custom Styles for LuckyJob-inspired design */
     body {
-        background-color: #f0f2f5; /* Very light grey background for content area */
+        background-color: #f0f2f5;
     }
 
     .main-content-section {
@@ -16,33 +15,45 @@
         padding-bottom: 3rem;
     }
 
+    /* Sidebar */
     .sidebar {
         background-color: #ffffff;
         border-radius: 12px;
         padding: 2rem;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); /* Softer shadow */
-        margin-bottom: 2rem; /* Spacing for mobile */
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        margin-bottom: 2rem;
     }
-
     .sidebar h5 {
         font-weight: 600;
         margin-bottom: 1.5rem;
         color: #333;
     }
-
     .sidebar .form-check {
         margin-bottom: 0.75rem;
     }
-
     .sidebar .form-check-input:checked {
-        background-color: #007bff; /* Primary brand color */
+        background-color: #007bff;
         border-color: #007bff;
     }
     .sidebar .form-check-label {
         font-size: 0.95rem;
         color: #555;
     }
+    .sidebar button[type="submit"] {
+        background-color: #343a40;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 0.5rem 1rem;
+        font-weight: 500;
+        width: 100%;
+        transition: background-color 0.2s ease-in-out;
+    }
+    .sidebar button[type="submit"]:hover {
+        background-color: #495057;
+    }
 
+    /* Content area */
     .content-area-header {
         display: flex;
         justify-content: space-between;
@@ -51,165 +62,101 @@
         padding-bottom: 1rem;
         border-bottom: 1px solid #e9ecef;
     }
-
     .content-area-header h2 {
         font-size: 1.8rem;
         font-weight: 600;
         color: #333;
     }
 
-    .sort-by-dropdown .dropdown-toggle {
-        background-color: transparent;
-        border: 1px solid #ced4da;
-        color: #495057;
-        padding: 0.5rem 1rem;
-        border-radius: 8px;
-        font-size: 0.9rem;
-    }
-
     .order-card {
         background-color: #ffffff;
-        border: none;
         border-radius: 12px;
         padding: 1.5rem;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-        margin-bottom: 1.5rem; /* Spacing between cards */
+        margin-bottom: 1.5rem;
         transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-        display: flex;
-        flex-direction: column;
     }
-
     .order-card:hover {
         transform: translateY(-3px);
         box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
     }
-
     .card-meta-top {
         display: flex;
         justify-content: space-between;
-        align-items: center;
         margin-bottom: 1rem;
         font-size: 0.85rem;
         color: #777;
     }
-
-    .card-meta-top .date {
-        font-weight: 500;
-    }
-
     .order-card-title {
         font-size: 1.5rem;
         font-weight: 600;
         color: #333;
         margin-bottom: 0.5rem;
     }
-
     .order-card-description {
         font-size: 0.95rem;
         color: #555;
         margin-bottom: 1rem;
     }
 
-    .order-details-meta {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.75rem; /* Spacing between badges/info */
-        margin-bottom: 1.5rem;
-    }
-
-    .detail-badge {
-        background-color: #e9ecef; /* Light grey background */
-        color: #6c757d;
-        padding: 0.4rem 0.8rem;
-        border-radius: 6px;
-        font-size: 0.8rem;
-        font-weight: 500;
-    }
-
-    /* Custom status badges based on example's colored tags */
     .status-badge {
         padding: 0.5rem 1rem;
         border-radius: 20px;
         font-weight: 600;
         font-size: 0.85em;
-        display: inline-block; /* To allow padding/margin */
+        display: inline-block;
     }
-
     .status-completed {
-        background-color: #d4edda; /* Light green */
-        color: #28a745; /* Darker green text */
+        background-color: #d4edda;
+        color: #28a745;
     }
-
     .status-in-progress {
-        background-color: #fff3cd; /* Light yellow */
-        color: #ffc107; /* Darker yellow text */
+        background-color: #fff3cd;
+        color: #ffc107;
     }
-
     .status-canceled {
-        background-color: #f8d7da; /* Light red */
-        color: #dc3545; /* Darker red text */
+        background-color: #f8d7da;
+        color: #dc3545;
     }
 
     .card-footer-actions {
-        margin-top: auto; /* Pushes content to bottom */
+        margin-top: auto;
         padding-top: 1.5rem;
         border-top: 1px solid #e9ecef;
         display: flex;
-        justify-content: flex-end; /* Push button to the right */
+        justify-content: flex-end;
     }
-
     .btn-details {
-        background-color: #343a40; /* Dark button color from your header */
+        background-color: #343a40;
         color: #fff;
         border-radius: 8px;
         padding: 0.6rem 1.5rem;
         font-weight: 500;
         transition: background-color 0.2s ease-in-out;
     }
-
     .btn-details:hover {
         background-color: #495057;
         color: #fff;
     }
 
-    /* Pagination styles similar to buttons */
+    /* Pagination */
     .pagination .page-item .page-link {
         border-radius: 8px !important;
         margin: 0 0.2rem;
         border-color: #dee2e6;
         color: #495057;
         font-weight: 500;
-        min-width: 40px; /* Ensure uniform button width */
+        min-width: 40px;
         text-align: center;
     }
     .pagination .page-item.active .page-link {
-        background-color: #343a40 !important; /* Use the dark button color for active */
+        background-color: #343a40 !important;
         border-color: #343a40 !important;
         color: #fff;
     }
     .pagination .page-item .page-link:hover {
         background-color: #e9ecef;
         color: #343a40;
-    }
-    .pagination .page-item.disabled .page-link {
-        background-color: #f8f9fa;
-        color: #adb5bd;
-    }
-
-    @media (max-width: 767.98px) {
-        .content-area-header {
-            flex-direction: column;
-            align-items: flex-start;
-        }
-        .content-area-header h2 {
-            margin-bottom: 1rem;
-        }
-        .sort-by-dropdown {
-            width: 100%;
-        }
-        .order-card {
-            padding: 1rem;
-        }
     }
 </style>
 {% endblock %}
@@ -218,152 +165,101 @@
 <section class="main-content-section">
     <div class="container">
         <div class="row">
-            {# Левая панель с фильтрами (пока пустая, но готова для расширения) #}
-            <div class="col-lg-3 d-none d-lg-block"> {# Скрыть на мобильных, показать на больших экранах #}
-                <div class="sidebar">
+            <!-- Левая панель фильтров -->
+            <div class="col-lg-3 mb-4">
+                <form method="get" class="sidebar" action="{% url 'orders:order_list' %}">
                     <h5>Фильтры</h5>
+
                     <div class="mb-4">
                         <h6>Статус заказа</h6>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="filterStatus1">
-                            <label class="form-check-label" for="filterStatus1">
-                                В процессе
-                            </label>
+                            <input class="form-check-input" type="radio" name="status" value=""
+                                {% if not request.GET.status %}checked{% endif %} id="statusAll">
+                            <label class="form-check-label" for="statusAll">Все</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="filterStatus2">
-                            <label class="form-check-label" for="filterStatus2">
-                                Завершен
-                            </label>
+                            <input class="form-check-input" type="radio" name="status" value="in_progress"
+                                {% if request.GET.status == 'in_progress' %}checked{% endif %} id="statusInProgress">
+                            <label class="form-check-label" for="statusInProgress">В процессе</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="filterStatus3">
-                            <label class="form-check-label" for="filterStatus3">
-                                Новый
-                            </label>
+                            <input class="form-check-input" type="radio" name="status" value="completed"
+                                {% if request.GET.status == 'completed' %}checked{% endif %} id="statusCompleted">
+                            <label class="form-check-label" for="statusCompleted">Завершен</label>
                         </div>
-                        {# Добавьте другие статусы по мере необходимости #}
                     </div>
 
                     <div class="mb-4">
-                        <h6>Диапазон дат</h6>
+                        <h6>Дата</h6>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="dateRange" id="filterDate1" checked>
-                            <label class="form-check-label" for="filterDate1">
-                                За все время
-                            </label>
+                            <input class="form-check-input" type="checkbox" name="last_month" value="true"
+                                {% if request.GET.last_month %}checked{% endif %} id="lastMonth">
+                            <label class="form-check-label" for="lastMonth">За последний месяц</label>
                         </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="dateRange" id="filterDate2">
-                            <label class="form-check-label" for="filterDate2">
-                                Последние 30 дней
-                            </label>
-                        </div>
-                        {# Можно добавить кастомные поля для выбора дат #}
                     </div>
-                    {# Здесь можно добавить другие группы фильтров: по клиенту, по описанию и т.д. #}
-                </div>
+
+                    <button type="submit">Применить</button>
+                </form>
+
             </div>
 
-            {# Правая область с карточками заказов #}
+            <!-- Правая колонка с заказами -->
             <div class="col-lg-9">
                 <div class="content-area-header">
-                    <h2>Заказы <span class="text-muted fw-normal ms-2">{{ orders.paginator.count }}</span></h2>
-                    <div class="sort-by-dropdown dropdown">
-                        <button class="btn dropdown-toggle" type="button" id="dropdownSortBy" data-bs-toggle="dropdown" aria-expanded="false">
-                            Сортировать по: Последнее обновление <i class="fas fa-filter ms-2"></i>
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownSortBy">
-                            <li><a class="dropdown-item" href="#">Дате создания</a></li>
-                            <li><a class="dropdown-item" href="#">Статусу</a></li>
-                            <li><a class="dropdown-item" href="#">Имени клиента</a></li>
-                        </ul>
-                    </div>
+                    <h2>Заказы <span class="text-muted fw-normal ms-2">{{ orders_count }}</span></h2>
+                    <form method="get" action="{% url 'orders:order_list' %}" class="d-flex" style="gap: 10px;">
+                        <input type="text" name="search" class="form-control"
+                            placeholder="Поиск по номеру"
+                            value="{{ request.GET.search }}">
+                        <button type="submit" class="btn btn-dark">Поиск</button>
+                    </form>
                 </div>
+
+
 
                 {% if orders %}
-                <div class="row">
-                    {% for order in orders %}
-                    <div class="col-md-6"> {# Карточки по 2 в ряд на средних/больших экранах #}
-                        <div class="card order-card">
-                            <div class="card-meta-top">
-                                <span class="date">{{ order.created_at|date:"d M Y" }}</span>
-                            </div>
-                            <h5 class="order-card-title">Заказ {{ order.order_number }}</h5>
-                            <p class="order-card-description">{{ order.description|default:"Описание отсутствует."|truncatechars:60 }}</p>
-
-                            {% comment %} <div class="order-details-meta">
-                                <span class="detail-badge"><i class="fas fa-user-circle me-1"></i> {{ order.client_name }}</span>
-                                <span class="detail-badge"><i class="fas fa-phone me-1"></i> {{ order.client_phone }}</span>
-                                <span class="detail-badge"><i class="fas fa-envelope me-1"></i> {{ order.client_email }}</span>
-                            </div> {% endcomment %}
-
-                            <span class="status-badge {% if order.is_completed %}status-completed{% elif order.order_status.name == 'Отменен' %}status-canceled{% else %}status-in-progress{% endif %}">
-                                <i class="fas fa-info-circle me-1"></i> Статус: {{ order.order_status.name }}
-                            </span>
-
-                            <div class="card-footer-actions">
-                                {# Убедитесь, что 'order_personal_access' URL настроен в orders/urls.py #}
-                                <a href="{% url "orders:public_order_detail" order.order_number %}" class="btn btn-details">
-                                    Подробнее <i class="fas fa-arrow-right ms-2"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    {% empty %}
-                    <div class="col-12">
-                        <div class="alert alert-info text-center py-5" role="alert">
-                            <h4 class="alert-heading display-6 mb-3">Заказов пока нет!</h4>
-                            <p class="lead mb-4">На данный момент нет активных заказов для отображения. Возможно, вы ищете свою персональную страницу заказа.</p>
-                            <hr>
-                            <p class="mb-0">Если у вас есть номер заказа и персональный токен, воспользуйтесь функцией отслеживания заказа.</p>
-                            {# <a href="{% url 'order_tracking' %}" class="btn btn-outline-info mt-3">Отследить мой заказ</a> #}
-                        </div>
-                    </div>
-                    {% endfor %}
+    <div class="row">
+        {% for order in orders %}
+        <div class="col-md-6">
+            <div class="order-card">
+                <div class="card-meta-top">
+                    <span class="date">{{ order.created_at|date:"d M Y" }}</span>
                 </div>
+                <h5 class="order-card-title">Заказ {{ order.order_number }}</h5>
+                <p class="order-card-description">
+                    {{ order.description|default:"Описание отсутствует."|truncatechars:60 }}
+                </p>
 
-                {# Пагинация #}
-                {% if orders.has_other_pages %}
-                <nav aria-label="Навигация по страницам" class="mt-4">
-                    <ul class="pagination justify-content-center">
-                        {% if orders.has_previous %}
-                            <li class="page-item"><a class="page-link" href="?page={{ orders.previous_page_number }}"><i class="fas fa-chevron-left"></i></a></li>
-                        {% else %}
-                            <li class="page-item disabled"><span class="page-link"><i class="fas fa-chevron-left"></i></span></li>
-                        {% endif %}
+                <span class="status-badge
+                    {% if order.is_completed %}status-completed
+                    {% elif order.order_status.name == 'Отменен' %}status-canceled
+                    {% else %}status-in-progress{% endif %}">
+                    Статус: {{ order.order_status.name }}
+                </span>
 
-                        {% for i in orders.paginator.page_range %}
-                            {% if orders.number == i %}
-                                <li class="page-item active" aria-current="page"><span class="page-link">{{ i }}</span></li>
-                            {% else %}
-                                <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
-                            {% endif %}
-                        {% endfor %}
+                <div class="card-footer-actions">
+                    <a href="{% url 'orders:public_order_detail' order.order_number %}" class="btn btn-details">
+                        Подробнее <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info text-center py-5" role="alert">
+                <h4 class="alert-heading display-6 mb-3">Заказов нет</h4>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="alert alert-info text-center py-5" role="alert">
+        <h4 class="alert-heading display-6 mb-3">Заказов пока нет!</h4>
+    </div>
+{% endif %}
 
-                        {% if orders.has_next %}
-                            <li class="page-item"><a class="page-link" href="?page={{ orders.next_page_number }}"><i class="fas fa-chevron-right"></i></a></li>
-                        {% else %}
-                            <li class="page-item disabled"><span class="page-link"><i class="fas fa-chevron-right"></i></span></li>
-                        {% endif %}
-                    </ul>
-                </nav>
-                {% endif %}
-
-                {% endif %} {# End of if orders #}
             </div>
         </div>
     </div>
 </section>
-{% endblock %}
-
-{% block extra_js %}
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl)
-    });
-});
-</script>
 {% endblock %}

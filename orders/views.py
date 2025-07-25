@@ -5,6 +5,9 @@ from .models import Order, Review, Comment, OrderStatus, OrderMedia
 from .forms import ReviewForm, CommentForm, OrderTrackingForm
 from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django_filters.views import FilterView
+
+from orders.filters import OrderFilter
 
 
 
@@ -14,18 +17,29 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 # Выборка только необходимых полей: Для оптимизации запросов к базе данных, можно использовать .only() или .values().
 
 # Сортировка: Заказы могут быть отсортированы по дате, статусу, имени клиента и т.д.
-def order_list(request):
-    all_orders = Order.objects.all().order_by('-created_at')
-    paginator = Paginator(all_orders, 10)
-    page = request.GET.get('page')
-    try:
-        orders = paginator.page(page)
-    except PageNotAnInteger:
-        orders = paginator.page(1)
-    except EmptyPage:
-        orders = paginator.page(paginator.num_pages)
 
-    return render(request, 'orders/order_list.html', {'orders': orders})
+def order_list(request):
+    qs = Order.objects.all()
+
+    # Поиск по номеру заказа (отдельно от фильтра)
+    search = request.GET.get('search')
+    if search:
+        qs = qs.filter(order_number__icontains=search)
+        context = {
+            'orders': qs,
+            'orders_count': qs.count(),
+            'filter': None
+        }
+        return render(request, 'orders/order_list.html', context)
+
+    # Фильтры
+    order_filter = OrderFilter(request.GET, queryset=qs)
+    context = {
+        'filter': order_filter,
+        'orders_count': order_filter.qs.count(),
+        'orders': order_filter.qs
+    }
+    return render(request, 'orders/order_list.html', context)
 
 
 def order_detail(request, order_number):

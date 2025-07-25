@@ -38,11 +38,15 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    #3rd apps
+    'django_filters',
+
     #apps
     'main',
     'core.apps.CoreConfig',
     'orders.apps.OrdersConfig',
     'consultations.apps.ConsultationsConfig',
+
 ]
 
 MIDDLEWARE = [
