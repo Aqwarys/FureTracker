@@ -1,77 +1,283 @@
-body {
-    font-family: 'Helvetica Neue', sans-serif;
-    color: #333;
-    background-color: #fff;
+/* General & Typography */
+:root {
+    --primary-font: 'Montserrat', sans-serif; /* Только Montserrat */
+
+    --color-dark: #2a2a2a;
+    --color-text: #555;
+    --color-light-gray: #fcfcfc;
+    --color-border-light: #eee;
+
+    /* Brand Colors */
+    --color-brand-primary: #a87e5b;
+    --color-brand-primary-hover: #926c4a;
+    --color-brand-accent-blue: #6a89cc;
+    --color-brand-accent-blue-hover: #5777bd;
+    --color-brand-gold: #ffc107;
 }
 
+body {
+    font-family: var(--primary-font); /* Montserrat для всего тела */
+    color: var(--color-text);
+    line-height: 1.6;
+    background-color: var(--color-light-gray);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--primary-font); /* Montserrat для заголовков */
+    color: var(--color-dark);
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+p {
+    font-family: var(--primary-font); /* Montserrat для параграфов */
+    color: var(--color-text);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+/* Navbar Styles */
 .logo-img {
-    max-height: 40px;  /* подгони под навбар */
+    max-height: 40px;
     width: auto;
     object-fit: contain;
 }
-
-
-
 .navbar-brand {
     font-size: 28px;
     letter-spacing: 2px;
+    font-family: var(--primary-font); /* Montserrat для бренда */
 }
-
 .nav-link {
     color: #000 !important;
     font-weight: 500;
+    transition: color 0.3s ease;
+    font-family: var(--primary-font); /* Montserrat для ссылок навигации */
 }
-
 .nav-link:hover {
     color: #777 !important;
 }
 
-.social-icons a {
-    color: #0d6efd;
-    font-size: 24px;
+/* Footer Styles */
+footer {
+    background-color: var(--color-light-gray);
+    border-top: 1px solid #e0e0e0;
 }
-
-.main-header {
-    background-color: #f9f9f9;
-}
-
 footer h6 {
     font-weight: 600;
+    color: var(--color-dark);
+    margin-bottom: 1rem;
+    font-family: var(--primary-font); /* Montserrat для заголовков футера */
 }
-
 footer p {
     margin: 0;
+    font-size: 0.95rem;
+    color: #666;
+    font-family: var(--primary-font); /* Montserrat для текста футера */
 }
-
 footer input[type="email"] {
-    border-radius: 0;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    padding: 0.75rem 1rem;
+    font-family: var(--primary-font); /* Montserrat для инпута */
 }
-
-footer button {
-    border-radius: 0;
-}
-
-
-
-
-/* Orders */
-body {
-    font-family: 'Helvetica Neue', sans-serif; /* Your preferred font */
-    color: #333;
-    background-color: #f0f2f5; /* Light grey background from the example */
-}
-
-/* Ensure Font Awesome is properly loaded from base.html */
-/* <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> */
-
-/* Basic button styles if you need to override Bootstrap defaults */
-.btn-dark {
-    background-color: #343a40; /* Your current dark button color */
-    border-color: #343a40;
+footer button.btn-dark {
+    background-color: var(--color-dark);
+    border-color: var(--color-dark);
     color: #fff;
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    font-family: var(--primary-font); /* Montserrat для текста кнопки */
+    font-weight: 500;
 }
-.btn-dark:hover {
+footer button.btn-dark:hover {
     background-color: #495057;
     border-color: #495057;
     color: #fff;
+}
+.text-center.small.py-3 {
+    border-top: 1px solid #e0e0e0;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem !important;
+    font-size: 0.85rem;
+    color: #888;
+    font-family: var(--primary-font); /* Montserrat */
+}
+
+/* Section Common Styles */
+section {
+    padding: 100px 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.section-title {
+    font-size: 3.2rem;
+    margin-bottom: 20px;
+    position: relative;
+    display: inline-block;
+    color: var(--color-dark);
+    font-family: var(--primary-font); /* Montserrat для заголовков секций */
+}
+.section-title::after {
+    content: '';
+    display: block;
+    width: 70px;
+    height: 4px;
+    background-color: var(--color-brand-primary);
+    margin: 15px auto 0;
+    border-radius: 2px;
+}
+.section-subtitle {
+    font-size: 1.25rem;
+    color: var(--color-text);
+    max-width: 750px;
+    margin: 0 auto 60px;
+    font-family: var(--primary-font); /* Montserrat для подзаголовков секций */
+}
+.text-center { text-align: center; }
+.mb-5 { margin-bottom: 3rem !important; }
+
+/* Backgrounds - general utility classes */
+.bg-light-gray { background-color: #f8f8f8; }
+.bg-accent-blue { background-color: var(--color-brand-accent-blue); }
+.bg-dark { background-color: var(--color-dark); }
+.bg-white { background-color: #fff; }
+
+/* Buttons - general custom buttons */
+.btn-primary-custom {
+    background-color: var(--color-brand-primary);
+    color: #fff;
+    border: none;
+    padding: 18px 40px;
+    font-size: 1.15rem;
+    font-weight: 600;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    box-shadow: 0 6px 20px rgba(168, 126, 91, 0.4);
+    text-decoration: none;
+    display: inline-block;
+    font-family: var(--primary-font); /* Montserrat для кнопок */
+}
+.btn-primary-custom:hover {
+    background-color: var(--color-brand-primary-hover);
+    transform: translateY(-4px);
+    color: #fff;
+    box-shadow: 0 10px 25px rgba(168, 126, 91, 0.5);
+    text-decoration: none;
+}
+
+.btn-secondary-custom {
+    background-color: transparent;
+    color: var(--color-brand-primary);
+    border: 2px solid var(--color-brand-primary);
+    padding: 18px 40px;
+    font-size: 1.15rem;
+    font-weight: 600;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    text-decoration: none;
+    display: inline-block;
+    font-family: var(--primary-font); /* Montserrat для кнопок */
+}
+.btn-secondary-custom:hover {
+    background-color: var(--color-brand-primary);
+    color: #fff;
+    transform: translateY(-4px);
+    box-shadow: 0 6px 20px rgba(168, 126, 91, 0.3);
+    text-decoration: none;
+}
+
+.btn-white-outline {
+    background-color: transparent;
+    color: #fff;
+    border: 2px solid #fff;
+    padding: 18px 40px;
+    font-size: 1.15rem;
+    font-weight: 600;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    text-decoration: none;
+    display: inline-block;
+    font-family: var(--primary-font); /* Montserrat для кнопок */
+}
+.btn-white-outline:hover {
+    background-color: #fff;
+    color: var(--color-brand-accent-blue);
+    transform: translateY(-4px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    text-decoration: none;
+}
+
+/* Modal specific styles (common if used globally) */
+#statusModal .modal-content {
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    padding: 1.5rem;
+}
+#statusModal .modal-header {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+#statusModal .modal-title {
+    font-weight: 700;
+    color: var(--color-dark);
+    font-family: var(--primary-font); /* Montserrat для заголовка модального окна */
+}
+#statusModal .modal-body {
+    padding-top: 1rem;
+    padding-bottom: 1.5rem;
+    font-family: var(--primary-font); /* Montserrat для тела модального окна */
+}
+#statusModal #modalIcon {
+    font-size: 4rem;
+    color: #28a745;
+}
+#statusModal .modal-footer {
+    border-top: none;
+    padding-top: 0;
+}
+
+
+/* Responsive Adjustments for Global/Common Elements */
+@media (max-width: 991.98px) {
+    section { padding: 80px 0; }
+    .section-title { font-size: 2.5rem; }
+    .section-subtitle { font-size: 1rem; margin-bottom: 40px; }
+    .btn-primary-custom, .btn-secondary-custom, .btn-white-outline {
+        padding: 15px 30px;
+        font-size: 1.05rem;
+    }
+}
+
+@media (max-width: 767.98px) {
+    section { padding: 60px 0; }
+    .section-title { font-size: 2.2rem; text-align: center; }
+    .section-title::after { margin-left: auto; margin-right: auto; }
+    .section-subtitle { margin-bottom: 30px; font-size: 1rem; }
+    .btn-primary-custom, .btn-secondary-custom, .btn-white-outline {
+        padding: 12px 25px;
+        font-size: 0.95rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+    section { padding: 60px 0; }
+    .section-title { font-size: 1.8rem; }
+    .btn-primary-custom, .btn-secondary-custom, .btn-white-outline {
+        padding: 10px 20px;
+        font-size: 0.85rem;
+    }
 }
