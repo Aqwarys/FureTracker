@@ -6,11 +6,11 @@
 {% block extra_head %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css">
-<link rel="stylesheet" href="{% static 'css/order_detail_styles.css' %}">
+<link rel="stylesheet" href="{% static 'css/order_detail.css' %}">
 {% endblock %}
 
 {% block content %}
-<section class="main-detail-section">
+<section class="order-detail-page main-detail-section">
     <div class="container text-center">
         <h1 class="mb-4">Детали Заказа №{{ order.order_number }}</h1>
         <div class="d-flex justify-content-center mb-5">

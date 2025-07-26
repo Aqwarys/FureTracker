@@ -1,92 +1,282 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}Главная{% endblock %}
+{% block title %}Baizhigit Mebel | Мебель на Заказ в Астане{% endblock %}
+
+{% block extra_head %}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}
 
 {% block content %}
-<!-- Баннер -->
-<section class="py-5 bg-light">
-    <div class="container d-flex flex-column flex-md-row align-items-center">
-        <div class="flex-fill mb-4 mb-md-0">
-            <h1 class="display-6 fw-semibold">Flexible Chair</h1>
-            <p class="text-muted">Nam liber tempor soluta nobis eleifend option congue nihil imperdiet doming.</p>
-            <a href="#" class="btn btn-dark mt-2">Shop Now</a>
+    <section class="hero-section">
+        <div class="hero-overlay"></div>
+        <div class="hero-content text-center">
+            <h1 class="hero-title">Творим Дома <br> Из Мечты</h1>
+            <p class="hero-subtitle">Ваш идеальный интерьер начинается с мебели, созданной специально для вас.</p>
+            <a href="#consultation-form" class="btn btn-primary-custom hero-btn">Получить консультацию</a>
         </div>
-        <div class="flex-fill text-center">
-            {% comment %} <img src="{% static 'img/chair-banner.png' %}" alt="Flexible Chair" class="img-fluid" style="max-height: 300px;"> {% endcomment %}
+        <div class="hero-images">
+            <img src="https://images.unsplash.com/photo-1616137303871-05ce745f9cdb?q=80" alt="Современная мебель в гостиной" class="hero-img-main">
+            <img src="https://plus.unsplash.com/premium_photo-1675616563084-63d1f129623d?w=600&q=80&auto=format&fit=crop" alt="Элегантная спальня" class="hero-img-secondary-1 d-none d-md-block">
+            <img src="https://images.unsplash.com/photo-1507089947368-19c1da9775ae?w=600&q=80&auto=format&fit=crop" alt="Уютная кухня" class="hero-img-secondary-2 d-none d-md-block">
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- Категории -->
-<section class="py-4">
-    <div class="container">
-        <div class="row text-center">
-            <div class="col-md-4">
-                {% comment %} <img src="{% static 'img/cat-chair.png' %}" alt="Chairs" class="img-fluid mb-2"> {% endcomment %}
-                <h6>Chairs</h6>
-                <p class="small text-muted">Nam liber tempor soluta eleifend option</p>
-                <a href="#" class="text-decoration-none small">View Collection →</a>
-            </div>
-            <div class="col-md-4">
-                {% comment %} <img src="{% static 'img/cat-stool.png' %}" alt="Stools" class="img-fluid mb-2"> {% endcomment %}
-                <h6>Stools</h6>
-                <p class="small text-muted">Nam liber tempor soluta eleifend option</p>
-                <a href="#" class="text-decoration-none small">View Collection →</a>
-            </div>
-            <div class="col-md-4">
-                {% comment %} <img src="{% static 'img/cat-table.png' %}" alt="Tables" class="img-fluid mb-2"> {% endcomment %}
-                <h6>Tables</h6>
-                <p class="small text-muted">Nam liber tempor soluta eleifend option</p>
-                <a href="#" class="text-decoration-none small">View Collection →</a>
-            </div>
-        </div>
-    </div>
-</section>
+    <section class="about-section text-center">
+        <div class="container">
+            <h2 class="section-title">О нас: Секреты Вашего Уютного Дома</h2>
+            <p class="section-subtitle">Мы создаем не просто мебель, а атмосферу, отражающую вашу индивидуальность.</p>
 
-<!-- Преимущества -->
-<section class="py-4 bg-light border-top border-bottom">
-    <div class="container d-flex justify-content-around text-center flex-wrap">
-        <div class="p-2">
-            <i class="fa fa-truck fa-lg mb-2"></i>
-            <h6 class="fw-semibold">Free Shipping Worldwide</h6>
-            <p class="small text-muted">Mirum est notare quam littera gothica.</p>
-        </div>
-        <div class="p-2">
-            <i class="fa fa-undo fa-lg mb-2"></i>
-            <h6 class="fw-semibold">Money Back Guarantee</h6>
-            <p class="small text-muted">Mirum est notare quam littera gothica.</p>
-        </div>
-        <div class="p-2">
-            <i class="fa fa-headset fa-lg mb-2"></i>
-            <h6 class="fw-semibold">Customer Support 24/7</h6>
-            <p class="small text-muted">Mirum est notare quam littera gothica.</p>
-        </div>
-    </div>
-</section>
-
-<!-- Каталог товаров -->
-<section class="py-5">
-    <div class="container">
-        <h5 class="text-center mb-4">Shop By Categories</h5>
-        <div class="row g-4">
-
-            {% for product in products %}
-            <div class="col-6 col-md-4 col-lg-3">
-                <div class="card border-0">
-                    <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.name }}">
-                    <div class="card-body text-center">
-                        <p class="small text-muted">{{ product.name }}</p>
-                        <p class="fw-bold">${{ product.price }} {% if product.old_price %}<span class="text-decoration-line-through text-muted small">${{ product.old_price }}</span>{% endif %}</p>
+            <div class="feature-grid">
+                <div class="feature-item"> <div class="feature-card">
+                        <i class="fas fa-warehouse feature-icon"></i>
+                        <h3>Крупнейшее Производство</h3>
+                        <p>Наши цеха площадью 2700 кв. м – это гарантия масштаба и эффективности.</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-card">
+                        <i class="fas fa-hammer feature-icon"></i>
+                        <h3>Опыт с 2008 года</h3>
+                        <p>Более 15 лет мы успешно производим высококачественную мебель для дома.</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-card">
+                        <i class="fas fa-city feature-icon"></i>
+                        <h3>1500+ Обустроенных Квартир</h3>
+                        <p>Мы гордимся тем, что обставили более полутора тысяч уютных домов и квартир.</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-card">
+                        <i class="fas fa-tools feature-icon"></i>
+                        <h3>Мастера с 15-летним Стажем</h3>
+                        <p>Команда профессионалов с многолетним опытом гарантирует безупречное качество каждого изделия.</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-card">
+                        <i class="fas fa-paint-brush feature-icon"></i>
+                        <h3>Бесплатный Дизайн и 3D Проект</h3>
+                        <p>Наш дизайнер приедет к вам, бесплатно создаст 3D-проект вашей будущей мебели.</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-card">
+                        <i class="fas fa-check-circle feature-icon"></i>
+                        <h3>Гарантия Качества</h3>
+                        <p>Мы используем только проверенные материалы и современное оборудование для долговечности.</p>
                     </div>
                 </div>
             </div>
-            {% endfor %}
-
         </div>
+    </section>
 
-        <div class="text-center mt-4">
-            <a href="#" class="btn btn-outline-dark">View All Products</a>
+    <section class="cta-portfolio-section py-5 bg-light-gray">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 mb-4 mb-lg-0 text-center text-lg-start">
+                    <h2 class="section-title mb-3">Ознакомьтесь с Нашим Портфолио</h2>
+                    <p class="section-subtitle mb-4">Вдохновитесь нашими реализованными проектами и найдите идеи для своего интерьера.</p>
+                    <a href="#" class="btn btn-secondary-custom">Перейти в Портфолио</a>
+                </div>
+                <div class="col-lg-6">
+                    <div class="portfolio-grid">
+                        <img
+                            src="https://plus.unsplash.com/premium_photo-1676320514018-2f5b7c5a701f?w=600&q=80&auto=format&fit=crop"
+                            alt="Проект портфолио 1"
+                            class="portfolio-thumb"
+                            loading="lazy">
+
+                        <img
+                            src="https://plus.unsplash.com/premium_photo-1676320514025-4caf7748f983?w=600&q=80&auto=format&fit=crop"
+                            alt="Проект портфолио 2"
+                            class="portfolio-thumb d-none d-md-block"
+                            loading="lazy">
+
+                        <img
+                            src="https://plus.unsplash.com/premium_photo-1670076720537-bde4646fa221?w=600&q=80&auto=format&fit=crop"
+                            alt="Проект портфолио 3"
+                            class="portfolio-thumb d-none d-md-block"
+                            loading="lazy">
+
+                        <img
+                            src="https://plus.unsplash.com/premium_photo-1670076505559-53f07006d89b?w=600&q=80&auto=format&fit=crop"
+                            alt="Проект портфолио 4"
+                            class="portfolio-thumb d-none d-md-block"
+                            loading="lazy">
+
+                        <img
+                            src="https://plus.unsplash.com/premium_photo-1675615949714-083a1a313224?w=600&q=80&auto=format&fit=crop"
+                            alt="Проект портфолио 5"
+                            class="portfolio-thumb d-none d-md-block"
+                            loading="lazy">
+
+                        <img
+                            src="https://plus.unsplash.com/premium_photo-1674676471339-fe57f0056992?w=600&q=80&auto=format&fit=crop"
+                            alt="Проект портфолио 6"
+                            class="portfolio-thumb d-none d-md-block"
+                            loading="lazy">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section class="why-choose-us-section py-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">Почему Выбирают Baizhigit Mebel?</h2>
+                <p class="section-subtitle">Сочетание традиций мастерства и современных технологий.</p>
+            </div>
+            <div class="row align-items-center">
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <img src="https://images.unsplash.com/photo-1653974123446-3eeff06fb6fb?w=600&q=80&auto=format&fit=crop" alt="Качественная мебель" class="img-fluid rounded shadow-lg">
+                </div>
+                <div class="col-lg-6">
+                    <ul class="why-list">
+                        <li><i class="fas fa-star list-icon"></i> Высокое качество материалов и фурнитуры</li>
+                        <li><i class="fas fa-truck-moving list-icon"></i> Собственная доставка и профессиональная установка</li>
+                        <li><i class="fas fa-users list-icon"></i> Индивидуальный подход к каждому клиенту</li>
+                        <li><i class="fas fa-lightbulb list-icon"></i> Креативные и функциональные дизайнерские решения</li>
+                        <li><i class="fas fa-award list-icon"></i> Долгосрочная гарантия на всю продукцию</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="consultation-section py-5 bg-accent-blue" id="consultation-form">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="content-card consultation-card text-center">
+                        <h2 class="section-title text-white mb-4">Получите Бесплатную Консультацию</h2>
+                        <p class="text-white-75 mb-4">Наш дизайнер свяжется с вами, ответит на все вопросы и поможет воплотить ваши идеи в жизнь.</p>
+                        <form method="post" id="consultationForm" action="{% url 'main:consultation_submit' %}">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <input type="text" name="name" class="form-control-custom" placeholder="Ваше Имя" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                   <input type="tel" name="phone" class="form-control-custom" placeholder="Номер Телефона" required
+                                        pattern="[0-9]{10,15}" title="Пожалуйста, введите от 10 до 15 цифр." maxlength="15">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <textarea name="message" class="form-control-custom" rows="4" placeholder="Кратко опишите ваш запрос или предпочтения (необязательно)"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-white-outline">Отправить заявку</button>
+                            <div id="formMessage" class="mt-3 text-white"></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="testimonials-section py-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">Что Говорят Наши Клиенты</h2>
+                <p class="section-subtitle">Довольные клиенты - лучшая реклама нашего мастерства.</p>
+            </div>
+            <div class="row">
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="testimonial-card">
+                        <div class="stars">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        </div>
+                        <p class="testimonial-text">"Заказывали кухню и шкафы. Результат превзошел все ожидания! Качество на высоте, а дизайнер учел все наши пожелания. Очень рекомендую!"</p>
+                        <p class="testimonial-author">- Асель М.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="testimonial-card">
+                        <div class="stars">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <p class="testimonial-text">"Baizhigit Mebel – это синоним надежности и стиля. Сделали мебель для гостиной, все точно в срок и идеально вписалось в интерьер. Спасибо команде!"</p>
+                        <p class="testimonial-author">- Данияр К.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="testimonial-card">
+                        <div class="stars">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        </div>
+                        <p class="testimonial-text">"Очень довольны работой. От замера до установки все было продумано до мелочей. Мебель выглядит дорого и служит прекрасно. Будем обращаться еще!"</p>
+                        <p class="testimonial-author">- Елена Р.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="contacts-section py-5 bg-dark text-white">
+        <div class="container text-center">
+            <h2 class="section-title text-white mb-4">Контакты</h2>
+            <p class="section-subtitle text-white-75 mb-5">Мы всегда на связи, чтобы помочь вам.</p>
+            <div class="row justify-content-center">
+                <div class="col-md-4 mb-4">
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt contact-icon"></i>
+                        <p class="contact-text">Астана, Казахстан</p>
+                        <p class="contact-small">Проспект Акжол, 20</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="contact-item">
+                        <i class="fas fa-phone contact-icon"></i>
+                        <p class="contact-text">+7 (777) 655-59-09</p>
+                        <p class="contact-small">Позвоните нам</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="contact-item">
+                        <i class="fas fa-envelope contact-icon"></i>
+                        <p class="contact-text">info@baizhigitmebel.kz</p>
+                        <p class="contact-small">Напишите нам</p>
+                    </div>
+                </div>
+            </div>
+            <div class="social-links mt-4">
+                <a href="https://www.instagram.com/mura_jihaz" target="_blank" class="social-icon-link"><i class="fab fa-instagram"></i></a>
+                <a href="https://wa.me/77765555909" target="_blank" class="social-icon-link"><i class="fab fa-whatsapp"></i></a>
+            </div>
+        </div>
+    </section>
+
+
+    <div class="modal fade" id="statusModal" tabindex="-1" aria-labelledby="statusModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="statusModalLabel">Статус заявки</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div id="modalIcon" class="mb-3">
+                        </div>
+                    <p id="modalMessage" class="lead"></p>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-primary-custom" data-bs-dismiss="modal">Закрыть</button>
+                </div>
+            </div>
         </div>
     </div>
-</section>
+
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'js/consultation_ajax.js' %}"></script>
 {% endblock %}
