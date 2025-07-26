@@ -212,22 +212,18 @@
 
                     <button type="submit">Применить</button>
                 </form>
-
             </div>
 
             <!-- Правая колонка с заказами -->
             <div class="col-lg-9">
-                <div class="content-area-header">
+                <div class="content-area-header d-flex justify-content-between align-items-center mb-3">
                     <h2>Заказы <span class="text-muted fw-normal ms-2">{{ orders_count }}</span></h2>
                     <form method="get" action="{% url 'orders:order_list' %}" class="d-flex" style="gap: 10px;">
                         <input type="text" name="search" class="form-control"
-                            placeholder="Поиск по номеру"
-                            value="{{ request.GET.search }}">
+                            placeholder="Поиск по номеру" value="{{ request.GET.search }}">
                         <button type="submit" class="btn btn-dark">Поиск</button>
                     </form>
                 </div>
-
-
 
                 {% if orders %}
                     <div class="row">
@@ -256,14 +252,37 @@
                                 </div>
                             </div>
                         </div>
-                        {% empty %}
-                        <div class="col-12">
-                            <div class="alert alert-info text-center py-5" role="alert">
-                                <h4 class="alert-heading display-6 mb-3">Заказов нет</h4>
-                            </div>
-                        </div>
                         {% endfor %}
                     </div>
+
+                    <!-- Пагинация -->
+                    {% if orders.has_other_pages %}
+                        <nav class="mt-4">
+                            <ul class="pagination justify-content-center">
+                                {% if orders.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?{{ request.GET.urlencode|safe }}&page={{ orders.previous_page_number }}">&laquo;</a>
+                                    </li>
+                                {% endif %}
+
+                                {% for num in orders.paginator.page_range %}
+                                    {% if num == orders.number %}
+                                        <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                                    {% else %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?{{ request.GET.urlencode|safe }}&page={{ num }}">{{ num }}</a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+
+                                {% if orders.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?{{ request.GET.urlencode|safe }}&page={{ orders.next_page_number }}">&raquo;</a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    {% endif %}
                 {% else %}
                     <div class="alert alert-info text-center py-5" role="alert">
                         <h4 class="alert-heading display-6 mb-3">Заказов пока нет!</h4>

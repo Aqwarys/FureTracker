@@ -27,8 +27,6 @@ class Order(models.Model):
             self.is_completed = False
         if not self.id and not self.order_number:
             super().save(*args, **kwargs)  # Сначала сохраняем, чтобы получить id
-            # Теперь используем id для генерации номера заказа
-            # Например, "ORD-000001", "KZ-001234", "МБЛ-0005"
             self.order_number = f"ORD-{self.id:06d}" # Форматируем id до 6 знаков с ведущими нулями
         super().save(*args, **kwargs) # Повторно сохраняем (если это был новый объект) или просто сохраняем изменения
 

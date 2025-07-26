@@ -12,41 +12,31 @@ from orders.filters import OrderFilter
 
 
 
-# Фильтрация/Поиск: Если это список для менеджера (вне админки), ему может понадобиться фильтровать или искать заказы.
-
-# Выборка только необходимых полей: Для оптимизации запросов к базе данных, можно использовать .only() или .values().
-
-# Сортировка: Заказы могут быть отсортированы по дате, статусу, имени клиента и т.д.
-
 def order_list(request):
     qs = Order.objects.all()
 
-    # Поиск по номеру заказа (отдельно от фильтра)
+    # Поиск
     search = request.GET.get('search')
     if search:
         qs = qs.filter(order_number__icontains=search)
-        context = {
-            'orders': qs,
-            'orders_count': qs.count(),
-            'filter': None
-        }
-        return render(request, 'orders/order_list.html', context)
 
     # Фильтры
     order_filter = OrderFilter(request.GET, queryset=qs)
+
+    paginator = Paginator(order_filter.qs, 5)
+    page_number = request.GET.get('page')
+    order_page = paginator.get_page(page_number)
+
     context = {
         'filter': order_filter,
         'orders_count': order_filter.qs.count(),
-        'orders': order_filter.qs
+        'orders': order_page
     }
     return render(request, 'orders/order_list.html', context)
 
 
+
 def order_detail(request, order_number):
-    """
-    Displays the details of a specific order, including its progress,
-    associated media, and moderated comments. Also handles comment submission.
-    """
     order = get_object_or_404(Order, order_number=order_number)
 
     if request.method == 'POST':
@@ -73,66 +63,3 @@ def order_detail(request, order_number):
         'all_order_statuses': all_order_statuses,
     }
     return render(request, 'orders/order_detail.html', context)
-
-def order_personal_access(request, order_number, access_token):
-    order = get_object_or_404(Order, order_number=order_number, access_token=access_token)
-
-    review_form = None
-    comment_form = None
-    has_review = False
-    existing_review = None
-
-    try:
-        existing_review = order.review
-        has_review = True
-    except Order.review.RelatedObjectDoesNotExist:
-        review_form = ReviewForm() # Создаем форму отзыва, если его нет
-
-    comment_form = CommentForm() # Форма для комментария всегда доступна
-
-    if request.method == 'POST':
-        if 'submit_review' in request.POST and not has_review:
-            review_form = ReviewForm(request.POST)
-            if review_form.is_valid():
-                review = review_form.save(commit=False)
-                review.order = order
-                review.save()
-                messages.success(request, "Ваш отзыв успешно отправлен и ожидает модерации!")
-                return redirect(reverse('order_personal_access', args=[order_number, access_token]))
-            else:
-                messages.error(request, "Пожалуйста, исправьте ошибки в форме отзыва.")
-
-        elif 'submit_comment' in request.POST:
-            comment_form = CommentForm(request.POST)
-            if comment_form.is_valid():
-                comment = comment_form.save(commit=False)
-                comment.order = order
-                comment.author_name = order.client_name # Автоматически заполняем имя автора
-                comment.save()
-                messages.success(request, "Ваш комментарий успешно отправлен и ожидает модерации!")
-                return redirect(reverse('order_personal_access', args=[order_number, access_token]))
-            else:
-                messages.error(request, "Пожалуйста, исправьте ошибки в форме комментария.")
-
-    # Медиафайлы
-    media_stages = OrderStatus.objects.filter(
-        id__in=order.media_items.values_list('order_stage', flat=True)
-    ).order_by('order_index')
-
-    media_by_stage = {}
-    for stage in media_stages:
-        media_by_stage[stage] = order.media_items.filter(order_stage=stage).order_by('uploaded_at')
-
-    # Комментарии (все, так как это личная ссылка клиента)
-    comments = order.comment_set.all().order_by('created_at')
-
-    context = {
-        'order': order,
-        'media_by_stage': media_by_stage,
-        'comments': comments,
-        'review_form': review_form,
-        'has_review': has_review,
-        'existing_review': existing_review,
-        'comment_form': comment_form,
-    }
-    return render(request, 'orders/order_personal_access.html', context)
