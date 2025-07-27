@@ -4,8 +4,10 @@
 {% block title %}Заказ №{{ order.order_number }}{% endblock %}
 
 {% block extra_head %}
+{# Подключение Font Awesome и GLightbox через CDN. Это внешние библиотеки, которые не должны быть в вашей статике на S3. #}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css">
+{# Ваш собственный CSS-файл, который теперь должен загружаться с S3 через STATIC_URL. #}
 <link rel="stylesheet" href="{% static 'css/order_detail.css' %}">
 {% endblock %}
 
@@ -20,7 +22,7 @@
             </span>
         </div>
 
-        {# Прогресс-бар Section #}
+        {# Секция Прогресс-бара #}
         <div class="content-card progress-section">
             <h2>Статус выполнения заказа</h2>
             <div class="progress-timeline" id="orderProgressBar">
@@ -28,7 +30,6 @@
                 <div class="progress-line-fill"></div>
 
                 {% for status in all_order_statuses %}
-                    {# Исключаем "Отменен" и "Новый заказ" из основной линии прогресса, если они не являются этапами выполнения #}
                     {% if status.name != 'Отменен' %}
                         <div class="progress-step {% if order.order_status.order_index == status.order_index %}current{% elif order.order_status.order_index > status.order_index %}completed{% endif %}" data-status-index="{{ status.order_index }}">
                             <div class="progress-step-icon-wrapper">
@@ -52,7 +53,7 @@
             <p class="text-muted small mt-4">Текущий статус заказа: <strong>{{ order.order_status.name }}</strong></p>
         </div>
 
-        {# Общая информация о заказе #}
+        {# Секция общей информации о заказе #}
         <div class="content-card order-info">
             <h2>Подробная информация о заказе</h2>
             <p><strong>Описание:</strong> {{ order.description|default:"Описание заказа отсутствует." }}</p>
@@ -62,49 +63,57 @@
             </div>
         </div>
 
-        {# Секция Медиа #}
+        {# Секция Медиафайлов #}
         <div class="content-card media-section">
-    <h2>Фото и видеоотчет о процессе</h2>
-    <div class="media-gallery-container">
-        {% if order_media %}
-            <div class="media-grid">
-                {% for media in order_media %}
-                <div class="media-item-card">
-                    {% with file_ext=media.file.url|lower|slice:"-3:" %}
-                        {% if file_ext == 'mp4' or file_ext == 'mov' or file_ext == 'avi' or file_ext == 'webm' %}
-                            <a href="{{ media.file.url }}" class="glightbox" data-type="video">
-                                <div class="video-thumb">
-                                    <video preload="metadata" class="img-fluid">
-                                        <source src="{{ media.file.url }}#t=0.5" type="video/mp4">
-                                    </video>
-                                    <div class="play-icon"><i class="fas fa-play-circle"></i></div>
-                                </div>
-                            </a>
-                        {% else %}
-                            <a href="{{ media.file.url }}" class="glightbox" data-type="image">
-                                <img src="{{ media.file.url }}" class="img-fluid" alt="Медиа">
-                            </a>
-                        {% endif %}
-                    {% endwith %}
-                    <div class="media-caption-body">
-                        <p class="mb-0">Этап: <strong>{{ media.order_stage.name|default:"Не указан" }}</strong></p>
-                        <small class="text-muted">{{ media.uploaded_at|date:"d M Y H:i" }}</small>
+            <h2>Фото и видеоотчет о процессе</h2>
+            <div class="media-gallery-container">
+                {% if order_media %}
+                    <div class="media-grid">
+                        {% for media in order_media %}
+                        <div class="media-item-card">
+                            {% with file_ext=media.file.url|lower|slice:"-3:" %}
+                                {% if file_ext == 'mp4' or file_ext == 'mov' or file_ext == 'avi' or file_ext == 'webm' %}
+                                    {# Для видео используем GLightbox #}
+                                    <a href="{{ media.file.url }}" class="glightbox" data-type="video">
+                                        <div class="video-thumb">
+                                            {# Тег video для превью. Убрал controls, так как GLightbox будет управлять воспроизведением #}
+                                            <video preload="metadata" class="img-fluid">
+                                                {# Убедитесь, что type соответствует реальному MIME-типу файла на S3 #}
+                                                <source src="{{ media.file.url }}" type="video/mp4">
+                                                {# Добавляем альтернативный source для MOV, если основной MP4 не сработает #}
+                                                {% if file_ext == 'mov' %}
+                                                    <source src="{{ media.file.url }}" type="video/quicktime">
+                                                {% endif %}
+                                                Ваш браузер не поддерживает тег video.
+                                            </video>
+                                            <div class="play-icon"><i class="fas fa-play-circle"></i></div>
+                                        </div>
+                                    </a>
+                                {% else %}
+                                    {# Для изображений используется GLightbox #}
+                                    <a href="{{ media.file.url }}" class="glightbox" data-type="image">
+                                        <img src="{{ media.file.url }}" class="img-fluid" alt="Медиа">
+                                    </a>
+                                {% endif %}
+                            {% endwith %}
+                            <div class="media-caption-body">
+                                <p class="mb-0">Этап: <strong>{{ media.order_stage.name|default:"Не указан" }}</strong></p>
+                                <small class="text-muted">{{ media.uploaded_at|date:"d M Y H:i" }}</small>
+                            </div>
+                        </div>
+                        {% endfor %}
                     </div>
-                </div>
-                {% endfor %}
+                {% else %}
+                    <div class="no-media-message">
+                        <i class="fas fa-camera fa-2x mb-3"></i>
+                        <p>На данный момент фото и видео для этого заказа отсутствуют.</p>
+                    </div>
+                {% endif %}
             </div>
-        {% else %}
-            <div class="no-media-message">
-                <i class="fas fa-camera fa-2x mb-3"></i>
-                <p>На данный момент фото и видео для этого заказа отсутствуют.</p>
-            </div>
-        {% endif %}
-    </div>
-</div>
+        </div>
 
-
-         {# Секция Отзыва #}
-        {% if order.is_completed  %}
+        {# Секция Отзыва #}
+        {% if order.is_completed %}
             <div class="content-card review-section">
                 <h2 id="review-section">Отзыв о заказе</h2>
                 {% if order.review and order.review.is_published %}
@@ -157,7 +166,6 @@
             {# Форма для добавления нового комментария #}
             <div class="comment-form-card mt-4">
                 <h3 class="mb-4">Оставить новый комментарий</h3>
-                {# Проверьте, что в вашем urls.py есть соответствующий url для обработки POST запроса #}
                 <form method="post" action="{% url 'orders:public_order_detail' order.order_number %}#comments-section">
                     {% csrf_token %}
                     <div class="mb-3">
@@ -199,8 +207,9 @@
 {% endblock %}
 
 {% block extra_js %}
+{# jQuery - если он вам нужен, оставьте. Если нет - удалите, чтобы уменьшить размер страницы. #}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css">
+{# GLightbox JavaScript #}
 <script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
 
 <script>
@@ -210,6 +219,15 @@ document.addEventListener("DOMContentLoaded", function() {
         touchNavigation: true,
         loop: true,
         autoplayVideos: true
+        // Дополнительные опции GLightbox для видео, если потребуется:
+        // video: {
+        //     autoplay: true, // Попытка автовоспроизведения
+        //     loop: true,     // Зацикливание видео
+        //     controls: true, // Отображение контролов видеоплеера внутри лайтбокса
+        //     width: '1280px',
+        //     height: '720px',
+        //     player: 'html5', // Явно указать HTML5 плеер
+        // },
     });
 });
 </script>
