@@ -1,5 +1,6 @@
 from django import forms
-from orders.models import Review, Comment, Order
+from orders.models import Review, Comment, OrderMedia
+from core.models import OrderStatus
 
 class ReviewForm(forms.ModelForm):
     class Meta:
@@ -36,3 +37,22 @@ class OrderTrackingForm(forms.Form): # Это не ModelForm, так как он
         widget=forms.TextInput(attrs={'placeholder': 'Введите номер заказа', 'class': 'form-control'}),
         label='Номер заказа'
     )
+
+
+class OrderMediaForm(forms.ModelForm):
+    # order_stage уже есть в модели OrderMedia, но нам нужно предоставить его здесь
+    # чтобы пользователь мог выбрать этап, к которому относится медиа.
+    # exclude позволяет не отображать поле 'file', так как оно будет обрабатываться JS
+    # order_id также будет передаваться JS, а не через форму
+    class Meta:
+        model = OrderMedia
+        # Исключаем 'file' и 'order', так как они будут добавлены программно или через JS
+        fields = ['order_stage']
+        widgets = {
+            'order_stage': forms.Select(attrs={'class': 'form-select mb-3'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['order_stage'].empty_label = 'Выберите этап заказа'
+        self.fields['order_stage'].queryset = OrderStatus.objects.exclude(name='Отменен').order_by('order_index')

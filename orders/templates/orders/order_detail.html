@@ -5,7 +5,7 @@
 
 {% block extra_head %}
 {# Подключение Font Awesome и GLightbox через CDN. Это внешние библиотеки, которые не должны быть в вашей статике на S3. #}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-5vUu+zB9jU4l6Z10a6l+1gWfW5+pB+J+Gg+Gg+Q+Gg+Gg+Gg+Gg+Gg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css">
 {# Ваш собственный CSS-файл, который теперь должен загружаться с S3 через STATIC_URL. #}
 <link rel="stylesheet" href="{% static 'css/order_detail.css' %}">
@@ -66,6 +66,33 @@
         {# Секция Медиафайлов #}
         <div class="content-card media-section">
             <h2>Фото и видеоотчет о процессе</h2>
+
+            {# Новая форма для загрузки медиа #}
+            <div class="upload-media-form-container mt-4 mb-4">
+                <h3>Загрузить новое медиа</h3>
+                <form id="s3-upload-form" method="post" enctype="multipart/form-data"
+                      data-presigned-url="{% url 'orders:get_s3_presigned_url' %}" {# Передаем URL для получения подписанного URL #}
+                      data-complete-upload-url="{% url 'orders:complete_s3_upload' %}" {# Передаем URL для завершения загрузки #}
+                      data-order-number="{{ order.order_number }}"> {# Передаем номер заказа #}
+                    {% csrf_token %}
+                    {{ order_media_form.order_stage }} {# Поле выбора статуса #}
+
+                    <div class="mb-3">
+                        <label for="id_media_file" class="form-label">Выберите файл (фото или видео):</label>
+                        <input type="file" id="id_media_file" name="media_file" class="form-control" accept="image/*,video/*">
+                    </div>
+
+                    <button type="button" id="upload-to-s3-btn" class="btn btn-primary mt-3">
+                        <i class="fas fa-cloud-upload-alt me-2"></i> Начать загрузку
+                    </button>
+
+                    <div class="progress mt-3" style="display: none;">
+                        <div class="progress-bar" role="progressbar" id="upload-progress-bar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                    </div>
+                    <div id="upload-status-message" class="mt-2 text-info"></div>
+                </form>
+            </div>
+
             <div class="media-gallery-container">
                 {% if order_media %}
                     <div class="media-grid">
@@ -76,11 +103,8 @@
                                     {# Для видео используем GLightbox #}
                                     <a href="{{ media.file.url }}" class="glightbox" data-type="video">
                                         <div class="video-thumb">
-                                            {# Тег video для превью. Убрал controls, так как GLightbox будет управлять воспроизведением #}
-                                            <video preload="metadata" class="img-fluid">
-                                                {# Убедитесь, что type соответствует реальному MIME-типу файла на S3 #}
+                                            <video preload="metadata" class="img-fluid" {% if media.thumbnail_url %}poster="{{ media.thumbnail_url }}"{% endif %}>
                                                 <source src="{{ media.file.url }}" type="video/mp4">
-                                                {# Добавляем альтернативный source для MOV, если основной MP4 не сработает #}
                                                 {% if file_ext == 'mov' %}
                                                     <source src="{{ media.file.url }}" type="video/quicktime">
                                                 {% endif %}
@@ -208,7 +232,7 @@
 
 {% block extra_js %}
 {# jQuery - если он вам нужен, оставьте. Если нет - удалите, чтобы уменьшить размер страницы. #}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-5vUu+zB9jU4l6Z10a6l+1gWfW5+pB+J+Gg+Gg+Q+Gg+Gg+Gg+Gg+Gg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 {# GLightbox JavaScript #}
 <script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
 
@@ -219,15 +243,6 @@ document.addEventListener("DOMContentLoaded", function() {
         touchNavigation: true,
         loop: true,
         autoplayVideos: true
-        // Дополнительные опции GLightbox для видео, если потребуется:
-        // video: {
-        //     autoplay: true, // Попытка автовоспроизведения
-        //     loop: true,     // Зацикливание видео
-        //     controls: true, // Отображение контролов видеоплеера внутри лайтбокса
-        //     width: '1280px',
-        //     height: '720px',
-        //     player: 'html5', // Явно указать HTML5 плеер
-        // },
     });
 });
 </script>
@@ -314,4 +329,9 @@ document.addEventListener('DOMContentLoaded', function () {
     window.addEventListener('resize', updateProgressBar);
 });
 </script>
+
+{# Подключаем Axios (для AJAX-запросов) #}
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+{# Ваш кастомный JavaScript для S3 загрузки #}
+<script src="{% static 'js/s3_upload.js' %}"></script>
 {% endblock %}

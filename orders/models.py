@@ -1,4 +1,5 @@
 # orders/models.py - UPDATED
+import os
 from django.db import models
 from core.models import OrderStatus
 import uuid
@@ -32,9 +33,16 @@ class Order(models.Model):
         return self.order_number or f"Заказ без номера ({self.id})"
 
 
+def order_media_upload_to(instance, filename):
+    # Эта функция формирует путь, который будет сохранен в базе данных
+    # и который S3 StorageBackend будет использовать относительно 'location' (media/).
+    # Результат: orders/ORD-000011/ваш_файл.mp4
+    return os.path.join('orders', str(instance.order.order_number), filename)
+
 class OrderMedia(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='media_items')
-    file = models.FileField(upload_to='orders/media/', blank=True, null=True)
+    # КЛЮЧЕВОЕ ИЗМЕНЕНИЕ: Используем динамическую функцию для upload_to
+    file = models.FileField(upload_to=order_media_upload_to, blank=True, null=True)
     order_stage = models.ForeignKey(OrderStatus, on_delete=models.PROTECT)
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
