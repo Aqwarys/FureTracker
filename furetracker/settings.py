@@ -100,13 +100,10 @@ USE_TZ = True
 # --- STATIC AND MEDIA URLS ---
 # URL для медиафайлов (будет обслуживаться с S3)
 MEDIA_URL = f"https://{os.getenv('AWS_STORAGE_BUCKET_NAME')}.s3.{os.getenv('AWS_S3_REGION_NAME')}.amazonaws.com/media/"
-# Если используете CloudFront или custom_domain:
-# MEDIA_URL = f"https://{os.getenv('AWS_S3_CUSTOM_DOMAIN')}/media/"
+
 
 # URL для статических файлов (будет обслуживаться с S3)
 STATIC_URL = f"https://{os.getenv('AWS_STORAGE_BUCKET_NAME')}.s3.{os.getenv('AWS_S3_REGION_NAME')}.amazonaws.com/static/"
-# Если используете CloudFront или custom_domain, и AWS_S3_CUSTOM_DOMAIN определен:
-# STATIC_URL = f"https://{os.getenv('AWS_S3_CUSTOM_DOMAIN')}/static/" # Убедитесь, что эта переменная окружения установлена!
 
 # STATICFILES_DIRS - это папки, где Django ищет статику ваших приложений
 STATICFILES_DIRS = [
@@ -174,5 +171,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-from django.core.files.storage import default_storage
-print(default_storage.__class__)
+
+# DEFAULT STORAGE CHECKER
+# from django.core.files.storage import default_storage
+# print(default_storage.__class__)

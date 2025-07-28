@@ -46,11 +46,11 @@ def order_detail(request, order_number):
             new_comment.order = order
             new_comment.save()
 
-            return redirect(reverse('public_order_detail', args=[order.order_number]) + '#comments-section')
+            return redirect(reverse('orders:public_order_detail', args=[order.order_number]) + '#comments-section')
     else:
         comment_form = CommentForm()
 
-    comments = order.comment_set.filter(moderated=True).order_by('created_at')
+    comments = order.comments.filter(moderated=True).order_by('created_at')
     order_media = OrderMedia.objects.filter(order=order).order_by('uploaded_at')
 
     all_order_statuses = OrderStatus.objects.all().order_by('order_index')

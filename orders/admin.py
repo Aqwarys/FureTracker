@@ -1,191 +1,215 @@
-from django.contrib import admin
-from orders.models import Order, OrderMedia, Comment, Review
-
-from django.utils.html import format_html
-from django.urls import reverse
-
 # orders/admin.py
 from django.contrib import admin
+from django.utils.html import format_html # For displaying HTML (thumbnails/previews)
+from django.db.models import Count, Q # For aggregation (counting comments, media items)
+
+# Import your models
 from .models import Order, OrderMedia, Comment, Review
-from core.models import OrderStatus # Важно: импортируем OrderStatus из core
-# from django.urls import reverse # Пока не нужна, пока закомментированы ссылки
-# from django.utils.html import format_html # Пока не нужна
+# Import OrderStatus from core app
+from core.models import OrderStatus # Make sure this import path is correct for your project structure
 
-# --- Inlines (только для того, что менеджер УПРАВЛЯЕТ напрямую через Заказ) ---
+# --- Global Admin Site Customization (Branding) ---
+admin.site.site_header = "Панель управления Бизнесом"
+admin.site.site_title = "Управление Заказами и Контентом"
+admin.site.index_title = "Добро пожаловать в админ-панель"
 
-class OrderMediaInline(admin.TabularInline):
-    """
-    Позволяет менеджеру добавлять и просматривать медиафайлы, привязанные к заказу
-    и его этапам, прямо на странице редактирования заказа.
-    """
+# --- Inline Forms for Related Models ---
+# OrderMediaInline: allows managing media files directly from the Order form
+class OrderMediaInline(admin.TabularInline): # Use TabularInline for a compact table view
     model = OrderMedia
-    extra = 1 # Сколько пустых форм для добавления показать по умолчанию
-    fields = ('file', 'order_stage')
-    readonly_fields = ('uploaded_at',) # Поле для чтения, так как генерируется автоматически
+    extra = 1 # Number of empty forms to display for adding new media
+    fields = ('order_stage', 'file', 'uploaded_at', 'get_thumbnail_or_preview')
+    readonly_fields = ('uploaded_at', 'get_thumbnail_or_preview',)
 
+    # Method to display a thumbnail for images or an icon for videos in the admin
+    def get_thumbnail_or_preview(self, obj):
+        if obj.file:
+            file_url = obj.file.url
+            file_ext = file_url.lower().split('.')[-1]
+            if file_ext in ['jpg', 'jpeg', 'png', 'gif', 'webp']:
+                return format_html('<img src="{}" style="max-width: 100px; max-height: 100px; object-fit: contain; border-radius: 4px;" />', file_url)
+            elif file_ext in ['mp4', 'mov', 'avi', 'webm']:
+                # For videos, display a clear icon. You might need Font Awesome CDN in base.html for this to show.
+                return format_html('<i class="fas fa-video fa-2x" style="color: #6c757d;" title="Видео файл"></i>')
+        return format_html('<span style="color: #adb5bd;">Нет файла</span>')
+    get_thumbnail_or_preview.short_description = 'Превью'
+
+
+# CommentInline: allows managing comments directly from the Order form
+class CommentInline(admin.TabularInline):
+    model = Comment
+    extra = 0 # Don't show empty forms by default
+    fields = ('author_name', 'text', 'created_at', 'moderated')
+    readonly_fields = ('created_at',)
+    # Managers can directly toggle 'moderated' on the form
+
+
+# ReviewInline: allows managing the review directly from the Order form
 class ReviewInline(admin.TabularInline):
-    """
-    Позволяет менеджеру добавлять и просматривать отзывы, привязанные к заказу
-    и его этапам, прямо на странице редактирования заказа.
-    """
     model = Review
-    extra = 1 # Сколько пустых форм для добавления показать по умолчанию
+    extra = 0
+    max_num = 1 # Only one review per order
     fields = ('rating', 'text', 'created_at', 'is_published')
     readonly_fields = ('created_at',)
+    # Managers can directly toggle 'is_published' on the form
 
-# --- Основной класс OrderAdmin ---
+
+# --- Registering Models with Custom Admin Options ---
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    """
-    Настройки административной панели для модели Заказ (Order).
-    Основное управление информацией о заказе и его статусе.
-    """
+    # Fields to display in the order list view
     list_display = (
-        'order_number', 'client_name', 'client_phone',
-        'order_status', 'is_completed', 'created_at', 'updated_at',
-        # 'get_personal_link', # Закомментируем, пока нет URL-ов. Добавим, когда будет View.
-        # 'get_review_status'  # Закомментируем, т.к. отображение статуса отзыва будет в ReviewAdmin
+        'order_number', 'order_status', 'client_name', 'client_phone',
+        'is_completed', 'created_at', 'updated_at',
+        'get_media_count', 'get_comments_count', 'has_review_status'
     )
+    # Filters in the sidebar for the order list
     list_filter = ('order_status', 'is_completed', 'created_at')
-    search_fields = ('order_number', 'client_name', 'client_phone', 'description')
+    # Fields to search by
+    search_fields = (
+        'order_number', 'description', 'client_name', 'client_email', 'client_phone',
+        'order_status__name' # Allows searching by status name
+    )
+    # Date hierarchy for easy navigation by year/month/day
     date_hierarchy = 'created_at'
+    # Default ordering for the list
+    ordering = ('-created_at',)
+    # Show save buttons at the top of the form
+    save_on_top = True
+    # Number of items per page in the list view
     list_per_page = 25
 
-    # Поля, которые можно только читать на форме редактирования (нельзя изменить)
-    readonly_fields = ('order_number', 'access_token', 'created_at', 'updated_at')
-
-    # Расположение полей на форме редактирования/создания заказа
+    # Grouping fields on the add/change form for better organization
     fieldsets = (
-        (None, { # Основная информация о заказе
-            'fields': (
-                ('order_number', 'order_status', 'is_completed'),
-                'description',
-                'access_token', # Поле access_token, которое будет readonly
-            )
+        (None, {
+            'fields': ('order_number', 'order_status', 'description'),
         }),
-        ('Информация о клиенте', { # Контактные данные клиента
-            'fields': ('client_name', ('client_phone', 'client_email')),
+        ('Информация о клиенте', {
+            'fields': ('client_name', 'client_email', 'client_phone'),
+            'description': 'Контактные данные клиента для этого заказа.',
         }),
-        ('Временные метки', { # Даты создания и обновления
-            'fields': ('created_at', 'updated_at'),
-            'classes': ('collapse',), # Можно свернуть эту секцию
+        ('Служебная информация', {
+            'fields': ('access_token', 'is_completed', 'created_at', 'updated_at'),
+            'classes': ('collapse',), # Make this section collapsible
+            'description': 'Технические детали заказа, не предназначенные для частого редактирования.'
         }),
     )
 
-    # Встраивание связанных моделей, которые менеджер должен непосредственно УПРАВЛЯТЬ здесь
-    inlines = [
-        OrderMediaInline,
-        ReviewInline
-    ]
+    readonly_fields = ('access_token', 'is_completed', 'created_at', 'updated_at')
 
-    # # Закомментированные кастомные методы для get_personal_link,
-    # # которые будут добавлены, когда появятся соответствующие URLы и View.
-    # def get_personal_link(self, obj):
-    #     if obj.access_token and obj.order_number:
-    #         # from django.urls import reverse
-    #         # from django.utils.html import format_html
-    #         # from django.urls import NoReverseMatch
-    #         try:
-    #             link = reverse('order_personal_access', args=[obj.order_number, obj.access_token])
-    #             return format_html('<a href="{}" target="_blank">Ссылка клиента</a>', link)
-    #         except NoReverseMatch:
-    #             return "Ссылка не настроена"
-    #     return "Нет (номер заказа не сгенерирован)"
-    # get_personal_link.short_description = "Персональная ссылка"
+    # Including inline forms for related objects
+    inlines = [OrderMediaInline, CommentInline, ReviewInline]
+
+    # Annotate queryset for efficient counting in list_display
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        # Using `_count` suffix to avoid clashes if model has fields named 'media_count'
+        queryset = queryset.annotate(
+            _media_count=Count('media_items', distinct=True),
+            _comments_count=Count('comments', distinct=True),
+            _has_review=Count('review', distinct=True) # Count related review objects
+        )
+        return queryset
+
+    # Custom methods for list_display
+    def get_media_count(self, obj):
+        return obj._media_count
+    get_media_count.short_description = 'Медиа (шт.)'
+    get_media_count.admin_order_field = '_media_count' # Allows sorting by this calculated field
+
+    def get_comments_count(self, obj):
+        return obj._comments_count
+    get_comments_count.short_description = 'Комментарии (шт.)'
+    get_comments_count.admin_order_field = '_comments_count'
+
+    def has_review_status(self, obj):
+        # Check if a review exists and if it's published or not
+        if hasattr(obj, 'review'): # Check if a review object is related
+            return obj.review.is_published
+        return False
+    has_review_status.boolean = True # Display as a checkbox
+    has_review_status.short_description = 'Отзыв опубликован?'
+    # Note: Can't easily sort by a boolean field that requires a relation lookup without more complex annotations.
 
 
-# --- Admin для других моделей (с акцентом на модерацию) ---
+    # Custom admin actions
+    @admin.action(description='Пометить выбранные заказы как "Завершенные"')
+    def mark_orders_completed(self, request, queryset):
+        try:
+            completed_status = OrderStatus.objects.get(name='Завершен')
+            updated_count = queryset.update(order_status=completed_status)
+            self.message_user(request, f'{updated_count} заказов успешно помечены как "Завершенные".', level='success')
+        except OrderStatus.DoesNotExist:
+            self.message_user(request, 'Статус "Завершен" не найден. Проверьте модель OrderStatus.', level='error')
+    actions = [mark_orders_completed]
 
-# Это должно быть в core/admin.py
-# from django.contrib import admin
-# from .models import OrderStatus
-# @admin.register(OrderStatus)
-# class OrderStatusAdmin(admin.ModelAdmin):
-#     list_display = ('name', 'order_index', 'description')
-#     list_editable = ('order_index',)
-#     search_fields = ('name',)
-#     list_per_page = 10 # Компактный список
+import os
+@admin.register(OrderMedia)
+class OrderMediaAdmin(admin.ModelAdmin):
+    list_display = ('order', 'order_stage', 'get_file_name', 'get_file_type', 'uploaded_at', 'get_thumbnail_or_preview_list')
+    list_filter = ('order_stage', 'uploaded_at')
+    search_fields = ('order__order_number', 'order_stage__name') # Search by order number and stage name
+    autocomplete_fields = ('order',) # For efficient selection of an Order ForeignKey
+    readonly_fields = ('uploaded_at', 'get_thumbnail_or_preview_list',)
+
+    def get_file_name(self, obj):
+        return os.path.basename(obj.file.name) if obj.file else '-'
+    get_file_name.short_description = 'Имя файла'
+
+    def get_file_type(self, obj):
+        if obj.file:
+            ext = os.path.splitext(obj.file.name)[1].lower()
+            if ext in ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp']:
+                return 'Изображение'
+            elif ext in ['.mp4', '.mov', '.avi', '.webm']:
+                return 'Видео'
+        return 'Другое'
+    get_file_type.short_description = 'Тип файла'
+
+    # Re-use the inline's preview method for list display
+    def get_thumbnail_or_preview_list(self, obj):
+        return OrderMediaInline.get_thumbnail_or_preview(self, obj)
+    get_thumbnail_or_preview_list.short_description = 'Превью'
+
 
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
-    """
-    Настройки административной панели для модели Комментарий.
-    Основное назначение: модерация комментариев, оставленных клиентами.
-    """
     list_display = ('order', 'author_name', 'text_preview', 'created_at', 'moderated')
+    # Allowing managers to quickly toggle 'moderated' status directly in the list
+    list_editable = ('moderated',)
     list_filter = ('moderated', 'created_at')
-    search_fields = ('text', 'author_name', 'order__order_number') # Поиск по номеру заказа
-    readonly_fields = ('order', 'author_name', 'created_at') # Эти поля нельзя редактировать
-    actions = ['mark_as_moderated', 'mark_as_unmoderated'] # Действия для пакетной модерации
+    search_fields = ('order__order_number', 'author_name', 'text')
+    readonly_fields = ('created_at',)
+    autocomplete_fields = ('order',)
 
-    # Метод для отображения превью текста в списке (чтобы не загромождать)
     def text_preview(self, obj):
         return obj.text[:75] + '...' if len(obj.text) > 75 else obj.text
-    text_preview.short_description = "Текст комментария"
+    text_preview.short_description = 'Текст комментария'
 
-    def mark_as_moderated(self, request, queryset):
-        queryset.update(moderated=True)
-        self.message_user(request, "Выбранные комментарии успешно одобрены.")
-    mark_as_moderated.short_description = "Одобрить выбранные комментарии"
-
-    def mark_as_unmoderated(self, request, queryset):
-        queryset.update(moderated=False)
-        self.message_user(request, "Выбранные комментарии отклонены.")
-    mark_as_unmoderated.short_description = "Отклонить выбранные комментарии"
+    @admin.action(description='Пометить выбранные комментарии как "Модерированные"')
+    def mark_comments_moderated(self, request, queryset):
+        updated_count = queryset.update(moderated=True)
+        self.message_user(request, f'{updated_count} комментариев успешно помечены как "Модерированные".', level='success')
+    actions = [mark_comments_moderated]
 
 
 @admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):
-    """
-    Настройки административной панели для модели Отзыв.
-    Основное назначение: модерация и публикация отзывов, оставленных клиентами.
-    """
     list_display = ('order', 'rating', 'text_preview', 'created_at', 'is_published')
+    # Allowing managers to quickly toggle 'is_published' status directly in the list
+    list_editable = ('is_published',)
     list_filter = ('is_published', 'rating', 'created_at')
-    search_fields = ('text', 'order__order_number')
-    readonly_fields = ('order', 'rating', 'created_at') # Эти поля нельзя редактировать
-    actions = ['publish_reviews', 'unpublish_reviews'] # Действия для пакетной публикации/скрытия
+    search_fields = ('order__order_number', 'text')
+    readonly_fields = ('created_at',)
+    autocomplete_fields = ('order',)
 
-    # Метод для отображения превью текста в списке
     def text_preview(self, obj):
-        return obj.text[:75] + '...' if len(obj.text) > 75 else obj.text
-    text_preview.short_description = "Текст отзыва"
+        return obj.text[:75] + '...' if obj.text and len(obj.text) > 75 else (obj.text or '')
+    text_preview.short_description = 'Текст отзыва'
 
+    @admin.action(description='Опубликовать выбранные отзывы')
     def publish_reviews(self, request, queryset):
-        queryset.update(is_published=True)
-        self.message_user(request, "Выбранные отзывы успешно опубликованы.")
-    publish_reviews.short_description = "Опубликовать выбранные отзывы"
-
-    def unpublish_reviews(self, request, queryset):
-        queryset.update(is_published=False)
-        self.message_user(request, "Выбранные отзывы сняты с публикации.")
-    unpublish_reviews.short_description = "Снять с публикации выбранные отзывы"
-
-
-# --- consultations/admin.py ---
-# Этот класс должен быть в consultations/admin.py
-# from django.contrib import admin
-# from .models import ConsultationRequest
-
-# @admin.register(ConsultationRequest)
-# class ConsultationRequestAdmin(admin.ModelAdmin):
-#     list_display = ('name', 'phone', 'message_preview', 'created_at', 'is_processed')
-#     list_filter = ('is_processed', 'created_at')
-#     search_fields = ('name', 'phone', 'message')
-#     readonly_fields = ('created_at',)
-#     actions = ['mark_as_processed', 'mark_as_unprocessed']
-#
-#     def message_preview(self, obj):
-#         return obj.message[:75] + '...' if len(obj.message) > 75 else obj.message
-#     message_preview.short_description = "Сообщение"
-#
-#     def mark_as_processed(self, request, queryset):
-#         queryset.update(is_processed=True)
-#         self.message_user(request, "Выбранные заявки помечены как обработанные.")
-#     mark_as_processed.short_description = "Пометить как обработанные"
-#
-#     def mark_as_unprocessed(self, request, queryset):
-#         queryset.update(is_processed=False)
-#         self.message_user(request, "Выбранные заявки помечены как необработанные.")
-#     mark_as_unprocessed.short_description = "Пометить как необработанные"
+        updated_count = queryset.update(is_published=True)
+        self.message_user(request, f'{updated_count} отзывов успешно опубликовано.', level='success')
+    actions = [publish_reviews]
