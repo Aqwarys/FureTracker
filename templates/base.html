@@ -6,6 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Baizhigit Mebel{% endblock %}</title>
 
+
+    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
+
+    {# Favicon для устройств Apple (Touch Icon), если нужен отдельный файл #}
+    <link rel="apple-touch-icon" href="{% static 'images/logo.png' %}">
+
+    {# Опциональные размеры PNG для лучшей поддержки на разных устройствах #}
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/logo.png' %}">
+    <link rel="icon" type="type/png" sizes="16x16" href="{% static 'images/logo.png' %}">
+
     {# Google Fonts - Montserrat and Playfair Display (GLOBAL) #}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

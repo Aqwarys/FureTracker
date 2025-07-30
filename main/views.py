@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from consultations.forms import ConsultationRequestForm
 
+
 # Ваше представление index
 def index(request):
     form = ConsultationRequestForm()
@@ -15,8 +16,6 @@ def consultation_submit_view(request):
 
         if form.is_valid():
             consultation_instance = form.save()
-            # Например, отправить email уведомление
-            # send_mail_to_admin(consultation_instance)
 
             print(f"Новая AJAX заявка успешно сохранена:\nИмя: {consultation_instance.name}\nТелефон: {consultation_instance.phone}\nEmail: {consultation_instance.email if hasattr(consultation_instance, 'email') else 'N/A'}\nСообщение: {consultation_instance.message}")
 

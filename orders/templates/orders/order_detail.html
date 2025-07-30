@@ -68,30 +68,32 @@
             <h2>Фото и видеоотчет о процессе</h2>
 
             {# Новая форма для загрузки медиа #}
+            {% if request.user.is_staff %}
             <div class="upload-media-form-container mt-4 mb-4">
                 <h3>Загрузить новое медиа</h3>
                 <form id="s3-upload-form" method="post" enctype="multipart/form-data"
-                      data-presigned-url="{% url 'orders:get_s3_presigned_url' %}" {# Передаем URL для получения подписанного URL #}
-                      data-complete-upload-url="{% url 'orders:complete_s3_upload' %}" {# Передаем URL для завершения загрузки #}
-                      data-order-number="{{ order.order_number }}"> {# Передаем номер заказа #}
-                    {% csrf_token %}
-                    {{ order_media_form.order_stage }} {# Поле выбора статуса #}
+                data-presigned-url="{% url 'orders:get_s3_presigned_url' %}" {# Передаем URL для получения подписанного URL #}
+                data-complete-upload-url="{% url 'orders:complete_s3_upload' %}" {# Передаем URL для завершения загрузки #}
+                data-order-number="{{ order.order_number }}"> {# Передаем номер заказа #}
+                {% csrf_token %}
+                {{ order_media_form.order_stage }} {# Поле выбора статуса #}
 
-                    <div class="mb-3">
-                        <label for="id_media_file" class="form-label">Выберите файл (фото или видео):</label>
-                        <input type="file" id="id_media_file" name="media_file" class="form-control" accept="image/*,video/*">
-                    </div>
+                <div class="mb-3">
+                    <label for="id_media_file" class="form-label">Выберите файл (фото или видео):</label>
+                    <input type="file" id="id_media_file" name="media_file" class="form-control" accept="image/*,video/*">
+                </div>
 
-                    <button type="button" id="upload-to-s3-btn" class="btn btn-primary mt-3">
-                        <i class="fas fa-cloud-upload-alt me-2"></i> Начать загрузку
-                    </button>
+                <button type="button" id="upload-to-s3-btn" class="btn btn-primary mt-3">
+                    <i class="fas fa-cloud-upload-alt me-2"></i> Начать загрузку
+                </button>
 
-                    <div class="progress mt-3" style="display: none;">
-                        <div class="progress-bar" role="progressbar" id="upload-progress-bar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
-                    </div>
-                    <div id="upload-status-message" class="mt-2 text-info"></div>
-                </form>
-            </div>
+                <div class="progress mt-3" style="display: none;">
+                    <div class="progress-bar" role="progressbar" id="upload-progress-bar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                </div>
+                <div id="upload-status-message" class="mt-2 text-info"></div>
+            </form>
+        </div>
+            {% endif %}
 
             <div class="media-gallery-container">
                 {% if order_media %}

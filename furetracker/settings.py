@@ -99,103 +99,6 @@ USE_TZ = True
 
 
 
-# # --- AWS S3 Storage Settings (always defined, but used conditionally) ---
-# AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
-# AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
-# AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
-# AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME', 'eu-central-1') # Specify your S3 region
-# AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com' if AWS_STORAGE_BUCKET_NAME else None
-
-# # Settings for signed URLs (if you use them for media access)
-# # If your media files should be publicly accessible without signed URLs, set AWS_QUERYSTRING_AUTH = False
-# AWS_QUERYSTRING_AUTH = True
-# AWS_QUERYSTRING_EXPIRE = 3600 # URL validity in seconds (e.g., 1 hour)
-
-
-# # --- Conditional Static and Media File Handling ---
-
-# if DEBUG:
-#     # --- LOCAL STATIC AND MEDIA SETTINGS FOR DEVELOPMENT ---
-
-#     # URL for static files (served locally by Django's development server)
-#     STATIC_URL = '/static/'
-#     # The absolute path to the directory where `collectstatic` will gather static files during development
-#     STATIC_ROOT = BASE_DIR / 'staticfiles_collected' # Ensure this path is correct
-
-#     # Directories where Django looks for static files of your apps (in addition to app's 'static' folders)
-#     STATICFILES_DIRS = [
-#         BASE_DIR / 'static', # Your project-level static files (e.g., custom_admin.css)
-#     ]
-
-#     # URL for media files (served locally by Django's development server)
-#     MEDIA_URL = '/media/'
-#     # The absolute path to the directory where user-uploaded media files will be stored locally
-#     MEDIA_ROOT = BASE_DIR / 'media'
-
-#     # Use Django's default FileSystemStorage for both default (media) and staticfiles
-#     STORAGES = {
-#         "default": {
-#             "BACKEND": "django.core.files.storage.FileSystemStorage",
-#         },
-#         "staticfiles": {
-#             "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
-#         },
-#     }
-
-# else:
-#     # --- S3 STATIC AND MEDIA SETTINGS FOR PRODUCTION ---
-
-#     # URL for media files (will be served from S3)
-#     MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/media/"
-
-#     # URL for static files (will be served from S3)
-#     STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/static/"
-
-#     # Directories where Django looks for static files of your apps (during collectstatic)
-#     STATICFILES_DIRS = [
-#         BASE_DIR / "static", # Your project-level static files (e.g., custom_admin.css)
-#     ]
-#     # STATIC_ROOT - where `collectstatic` gathers static files BEFORE uploading to S3
-#     STATIC_ROOT = BASE_DIR / "staticfiles_collected" # This path is still used by collectstatic
-
-#     # STORAGES configuration for S3
-#     STORAGES = {
-#         "default": { # This storage is for your media files (including videos)
-#             "BACKEND": "storages.backends.s3.S3Storage",
-#             "OPTIONS": {
-#                 "bucket_name": AWS_STORAGE_BUCKET_NAME,
-#                 "region_name": AWS_S3_REGION_NAME,
-#                 "querystring_auth": AWS_QUERYSTRING_AUTH,
-#                 "querystring_expire": AWS_QUERYSTRING_EXPIRE,
-#                 "custom_domain": AWS_S3_CUSTOM_DOMAIN, # Use the general custom domain
-#                 "url_protocol": "https:", # Use HTTPS
-#                 "location": "media", # <-- IMPORTANT: All media files will be in the 'media/' folder
-#                 "object_parameters": {
-#                     "ContentDisposition": "inline", # Crucial for in-browser playback
-#                     "CacheControl": "max-age=86400", # Cache for 24 hours
-#                     # "ContentType": "video/mp4", # Uncomment ONLY if ALL default uploads are MP4
-#                 },
-#             },
-#         },
-#         "staticfiles": { # This storage is for your static files
-#             "BACKEND": "storages.backends.s3.S3Storage",
-#             "OPTIONS": {
-#                 "bucket_name": AWS_STORAGE_BUCKET_NAME,
-#                 "region_name": AWS_S3_REGION_NAME,
-#                 "querystring_auth": False, # Static files are usually public and don't require signed URLs
-#                 "custom_domain": AWS_S3_CUSTOM_DOMAIN, # Use the general custom domain
-#                 "url_protocol": "https:",
-#                 "location": "static", # <-- IMPORTANT: All static files will be in the 'static/' folder
-#                 "object_parameters": {
-#                     "CacheControl": "max-age=86400",
-#                 },
-#             },
-#         },
-#     }
-
-
-
-
 
 
 
@@ -290,7 +193,7 @@ JAZZMIN_SETTINGS = {
     "site_brand": "Управление Заказами", # Заголовок бренда
     "site_logo": "images/logo.png",  # Путь к вашему логотипу в папке STATICFILES_DIRS/static (например, 'static/img/logo.png')
     "login_logo_dark": None, # Можно использовать темный логотип для темной темы логина
-    "site_icon": "favicon.ico", # Favicon для сайта
+    "site_icon": "images/logo.png", # Favicon для сайта
 
     # Приветствие
     "welcome_sign": "Добро пожаловать в панель управления!",
