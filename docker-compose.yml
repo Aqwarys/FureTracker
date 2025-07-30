@@ -1,0 +1,35 @@
+services:
+  db:
+    image: postgres:15-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment: # Переменные окружения для контейнера базы данных
+      POSTGRES_DB: mydatabase        # Имя вашей базы данных
+      POSTGRES_USER: myuser          # Имя пользователя БД
+      POSTGRES_PASSWORD: mypassword  # Пароль пользователя БД (можно изменить)
+    ports:
+      - "5432:5432"
+
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+      - django_logs:/var/log/django/
+    ports:
+      - "8000:8000"
+    environment:
+      DJANGO_DEBUG: "True"
+      SECRET_KEY: "your_insecure_local_secret_key"
+      DJANGO_ALLOWED_HOSTS: "localhost,127.0.0.1"
+      DATABASE_URL: "postgres://myuser:mypassword@db:5432/mydatabase"
+
+    env_file:
+      - .env # <--- Эта строка указывает Docker Compose, что он должен загружать переменные окружения из .env
+
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
+  django_logs:

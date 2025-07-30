@@ -65,49 +65,49 @@ p {
 
 /* Footer Styles */
 footer {
-    background-color: var(--color-light-gray);
-    border-top: 1px solid #e0e0e0;
+    background-color: var(--color-dark);
+    color: #fff;
+    border-top: 1px solid var(--color-dark);
+    padding-top: 5rem;
+    padding-bottom: 4rem;
 }
+
 footer h6 {
-    font-weight: 600;
-    color: var(--color-dark);
-    margin-bottom: 1rem;
-    font-family: var(--primary-font); /* Montserrat для заголовков футера */
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 1.5rem;
+    font-family: var(--primary-font);
+    text-transform: uppercase;
 }
+
 footer p {
     margin: 0;
     font-size: 0.95rem;
-    color: #666;
-    font-family: var(--primary-font); /* Montserrat для текста футера */
+    color: #ccc;
+    font-family: var(--primary-font);
 }
-footer input[type="email"] {
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    padding: 0.75rem 1rem;
-    font-family: var(--primary-font); /* Montserrat для инпута */
-}
-footer button.btn-dark {
-    background-color: var(--color-dark);
-    border-color: var(--color-dark);
+
+footer a {
     color: #fff;
-    border-radius: 8px;
-    padding: 0.75rem 1.5rem;
-    transition: background-color 0.3s ease, border-color 0.3s ease;
-    font-family: var(--primary-font); /* Montserrat для текста кнопки */
-    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.3s ease;
 }
-footer button.btn-dark:hover {
-    background-color: #495057;
-    border-color: #495057;
-    color: #fff;
+
+footer a:hover {
+    color: var(--color-brand-primary);
+    text-decoration: underline;
 }
-.text-center.small.py-3 {
-    border-top: 1px solid #e0e0e0;
-    margin-top: 1.5rem;
-    padding-top: 1.5rem !important;
+
+/* Стили для нижней строки копирайта */
+footer .row:last-of-type p,
+footer .row:last-of-type a,
+footer .row:last-of-type li {
+    color: #aaa;
     font-size: 0.85rem;
-    color: #888;
-    font-family: var(--primary-font); /* Montserrat */
+}
+
+footer .row:last-of-type a:hover {
+    color: var(--color-brand-primary);
 }
 
 /* Section Common Styles */

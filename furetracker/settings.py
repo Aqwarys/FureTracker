@@ -71,13 +71,23 @@ WSGI_APPLICATION = 'furetracker.wsgi.application'
 # -------------------
 # DATABASE
 # -------------------
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+import dj_database_url # pip install dj_database_url psycopg2-binary
 
+DATABASE_URL = os.getenv('DATABASE_URL')
+
+
+if not DATABASE_URL:
+    raise ImproperlyConfigured("DATABASE_URL is not set in the environment. It is required for all environments.")
+
+DATABASES = {
+        'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600)
+    }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 # -------------------
 # PASSWORDS
 # -------------------
@@ -96,31 +106,110 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
+# -------------------
+# LOGGING
+# -------------------
 
+LOGGING = {
+    'version': 1, # Версия схемы логирования. Всегда 1.
+    'disable_existing_loggers': False, # Не отключать существующие логгеры (например, Django's по умолчанию)
 
+    # 1. Форматтеры: Как будут выглядеть ваши сообщения в логах
+    'formatters': {
+        'verbose': { # Для детальных логов (продакшен)
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
+        'simple': { # Для простых логов (локальная разработка)
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
 
+    # 2. Фильтры: Дополнительная фильтрация сообщений
+    'filters': {
+        'require_debug_true': { # Сообщения только при DEBUG=True
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+        'require_debug_false': { # Сообщения только при DEBUG=False
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+    },
 
+    # 3. Хендлеры: Куда отправлять логи
+    'handlers': {
+        'console': { # Вывод логов в консоль (stdout/stderr)
+            'level': 'INFO', # Минимальный уровень для вывода в консоль
+            'filters': ['require_debug_true'], # Только при DEBUG=True
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+        'file': { # Вывод логов в файл (для продакшена)
+            'level': 'INFO', # Минимальный уровень для записи в файл
+            'filters': ['require_debug_false'], # Только при DEBUG=False
+            'class': 'logging.handlers.RotatingFileHandler', # Ротация файла, чтобы не рос бесконечно
+            'filename': '/var/log/django/furetracker.log', # Путь к файлу логов на сервере
+            'maxBytes': 1024 * 1024 * 5, # 5 MB на файл
+            'backupCount': 5, # Хранить 5 старых файлов логов
+            'formatter': 'verbose',
+        },
+        'mail_admins': { # Отправка ERROR/CRITICAL логов администраторам по почте
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler',
+             # Обязательно настроить EMAIL_BACKEND, EMAIL_HOST и ADMINS
+        },
+    },
 
+    # 4. Логгеры: Кто генерирует логи и какие хендлеры их обрабатывают
+    'loggers': {
+        'django': { # Логгер для Django-сообщений (SQL-запросы, ошибки и т.д.)
+            'handlers': ['console', 'file'], # Отправлять и в консоль, и в файл
+            'level': 'INFO', # Начинаем с INFO, можно поднять до DEBUG для детальной отладки
+            'propagate': False, # Не передавать логи выше по иерархии (чтобы не дублировались)
+        },
+        'django.request': { # Логгер для HTTP-запросов и ошибок (4xx/5xx)
+            'handlers': ['console', 'file', 'mail_admins'],
+            'level': 'ERROR', # Отправляем ошибки запросов администраторам
+            'propagate': False,
+        },
+        'orders': { # Логгер для вашего приложения 'orders'
+            'handlers': ['console', 'file'],
+            'level': 'INFO', # Уровень для вашего приложения
+            'propagate': False,
+        },
+        # Добавьте логгеры для других ваших приложений ('consultations', 'main', 'core')
+        'consultations': {
+            'handlers': ['console', 'file'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'core': {
+            'handlers': ['console', 'file'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'main': {
+            'handlers': ['console', 'file'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
 
-
-
-
+    # 5. Root Logger: Логгер по умолчанию, если сообщение не обрабатывается специфичным логгером
+    'root': {
+        'handlers': ['console', 'file'],
+        'level': 'WARNING', # По умолчанию все остальные сообщения выше WARNING
+    }
+}
 
 
 # --- STATIC AND MEDIA URLS ---
-# URL для медиафайлов (будет обслуживаться с S3)
-MEDIA_URL = f"https://{os.getenv('AWS_STORAGE_BUCKET_NAME')}.s3.{os.getenv('AWS_S3_REGION_NAME')}.amazonaws.com/media/"
-
-
-# URL для статических файлов (будет обслуживаться с S3)
-STATIC_URL = f"https://{os.getenv('AWS_STORAGE_BUCKET_NAME')}.s3.{os.getenv('AWS_S3_REGION_NAME')}.amazonaws.com/static/"
 
 # STATICFILES_DIRS - это папки, где Django ищет статику ваших приложений
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
-# STATIC_ROOT - куда `collectstatic` собирает статику ПЕРЕД загрузкой на S3
-STATIC_ROOT = BASE_DIR / "staticfiles_collected"
+
 # AWS S3 Storage Settings
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
@@ -148,12 +237,8 @@ STORAGES = {
                 # --- ЭТИ ПАРАМЕТРЫ КЛЮЧЕВЫЕ ДЛЯ ВОСПРОИЗВЕДЕНИЯ В БРАУЗЕРЕ ---
                 # 1. Content-Disposition: 'inline' говорит браузеру отображать файл, а не скачивать его.
                 "ContentDisposition": "inline",
-                # 2. Cache-Control: Настройки кэширования для браузера. Устанавливает, как долго браузер
-                #    может кэшировать файл. 86400 секунд = 24 часа.
                 "CacheControl": "max-age=86400",
-                # Content-Type: Django-storages обычно хорошо определяет его автоматически.
-                # Если он не справляется, и у вас *только* видео в этом хранилище, можно явно указать:
-                # "ContentType": "video/mp4", # Раскомментируйте ТОЛЬКО если все default-загрузки это MP4
+
             },
         },
     },
@@ -199,7 +284,7 @@ JAZZMIN_SETTINGS = {
     "welcome_sign": "Добро пожаловать в панель управления!",
 
     # Копирайт в футере
-    "copyright": "ТОО 'Ваша Компания' 2024",
+    "copyright": "BaizhigitMebel 2025",
 
     # Дополнительные ссылки в верхнем меню (например, ссылка на сайт)
     "topmenu_links": [
@@ -221,7 +306,7 @@ JAZZMIN_SETTINGS = {
     "order_with_respect_to": ["orders", "consultation", "core.orderstatus", "auth"], # Свои приложения выше
 
     # Возможность переключать темную/светлую тему
-    "show_ui_builder": True, # Установите в True для включения конструктора UI (для настройки темы)
+    "show_ui_builder": DEBUG, # Установите в True для включения конструктора UI (для настройки темы)
                               # и НЕ ЗАБУДЬТЕ УСТАНОВИТЬ В FALSE В ПРОДАКШЕНЕ
 
     # Дополнительный CSS для Jazzmin

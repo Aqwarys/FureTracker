@@ -96,7 +96,7 @@ class OrderAdmin(admin.ModelAdmin):
         }),
     )
 
-    readonly_fields = ('access_token', 'is_completed', 'created_at', 'updated_at')
+    readonly_fields = ('order_number', 'access_token', 'is_completed', 'created_at', 'updated_at')
 
     # Including inline forms for related objects
     inlines = [OrderMediaInline, CommentInline, ReviewInline]
@@ -176,7 +176,6 @@ class OrderMediaAdmin(admin.ModelAdmin):
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
     list_display = ('order', 'author_name', 'text_preview', 'created_at', 'moderated')
-    # Allowing managers to quickly toggle 'moderated' status directly in the list
     list_editable = ('moderated',)
     list_filter = ('moderated', 'created_at')
     search_fields = ('order__order_number', 'author_name', 'text')
@@ -197,7 +196,6 @@ class CommentAdmin(admin.ModelAdmin):
 @admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):
     list_display = ('order', 'rating', 'text_preview', 'created_at', 'is_published')
-    # Allowing managers to quickly toggle 'is_published' status directly in the list
     list_editable = ('is_published',)
     list_filter = ('is_published', 'rating', 'created_at')
     search_fields = ('order__order_number', 'text')
