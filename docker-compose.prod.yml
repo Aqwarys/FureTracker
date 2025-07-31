@@ -1,0 +1,29 @@
+services:
+  web:
+    build: .
+    env_file:
+      - .env
+
+    volumes:
+      - django_logs:/var/log/django/ # Логи Django
+
+
+    restart: always
+
+  nginx:
+    image: nginx:1.25.3-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d/:/etc/nginx/conf.d/:ro
+      - nginx_logs:/var/log/nginx/
+
+    depends_on:
+      - web
+    restart: always
+
+volumes:
+  django_logs:
+  nginx_logs:
