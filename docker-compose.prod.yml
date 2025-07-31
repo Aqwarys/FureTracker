@@ -1,14 +1,16 @@
+version: '3.8'
+
 services:
   web:
     build: .
     env_file:
       - .env
-
     volumes:
-      - django_logs:/var/log/django/ # Логи Django
-
-
+      - django_logs:/var/log/django/
     restart: always
+    depends_on:
+      - db
+      - nginx
 
   nginx:
     image: nginx:1.25.3-alpine
@@ -19,11 +21,22 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./nginx/conf.d/:/etc/nginx/conf.d/:ro
       - nginx_logs:/var/log/nginx/
-
     depends_on:
       - web
+      - db
+    restart: always
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: mebeldata
+      POSTGRES_USER: furetracker_user
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     restart: always
 
 volumes:
   django_logs:
   nginx_logs:
+  postgres_data:

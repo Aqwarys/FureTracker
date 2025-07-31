@@ -5,8 +5,8 @@ services:
       - postgres_data:/var/lib/postgresql/data/
     environment: # Переменные окружения для контейнера базы данных
       POSTGRES_DB: mydatabase        # Имя вашей базы данных
-      POSTGRES_USER: myuser          # Имя пользователя БД
-      POSTGRES_PASSWORD: mypassword  # Пароль пользователя БД (можно изменить)
+      POSTGRES_USER: admin_mebel          # Имя пользователя БД
+      POSTGRES_PASSWORD: ${DB_PASSWORD}  # Пароль пользователя БД (можно изменить)
     ports:
       - "5432:5432"
 
