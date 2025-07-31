@@ -1,10 +1,15 @@
+version: '3.8'
+
 services:
   web:
     build: .
     env_file:
-      - .env
+      - .env.prod
     volumes:
       - django_logs:/var/log/django/
+      - .:/app
+    expose:
+      - "8000"
     restart: always
     depends_on:
       db:
