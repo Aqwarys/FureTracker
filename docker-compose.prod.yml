@@ -4,10 +4,10 @@ services:
   web:
     build: .
     env_file:
-      - .env
-    volumes:
-      - django_logs:/var/log/django/
-      - .:/app
+      - ./.env
+    # ВНИМАНИЕ: Убрано монтирование тома `- .:/app`
+    # Код теперь полностью "запекается" в образ на этапе сборки.
+    # Это предотвратит проблемы с правами доступа.
     expose:
       - "8000"
     restart: always
