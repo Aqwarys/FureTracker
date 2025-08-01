@@ -1,15 +1,12 @@
-version: '3.8'
-
 services:
   web:
     build: .
     env_file:
       - ./.env
-    # ВНИМАНИЕ: Убрано монтирование тома `- .:/app`
-    # Код теперь полностью "запекается" в образ на этапе сборки.
-    # Это предотвратит проблемы с правами доступа.
     expose:
       - "8000"
+    environment:
+      - DJANGO_SETTINGS_MODULE=furetracker.settings
     restart: always
     depends_on:
       db:

@@ -71,7 +71,7 @@ WSGI_APPLICATION = 'furetracker.wsgi.application'
 # -------------------
 # DATABASE
 # -------------------
-import dj_database_url # pip install dj_database_url psycopg2-binary
+import dj_database_url
 
 DATABASE_URL = os.getenv('DATABASE_URL')
 
