@@ -15,6 +15,13 @@ class Order(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
     is_completed = models.BooleanField(default=False)
+    assigned_employees = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name='Назначенные сотрудники',
+        help_text='Имена сотрудников, работающих над заказом, их роли или любые другие связанные пометки.'
+    )
+
 
     class Meta:
         verbose_name = 'Заказ'
@@ -24,13 +31,13 @@ class Order(models.Model):
     def save(self, *args, **kwargs):
         self.is_completed = (self.order_status.name == 'Завершен')
 
-        if not self.id and not self.order_number:
+        if not self.pk and not self.order_number:
             super().save(*args, **kwargs)
-            self.order_number = f"ORD-{self.id:06d}"
+            self.order_number = f"ORD-{self.pk:06d}"
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return self.order_number or f"Заказ без номера ({self.id})"
+        return self.order_number or f"Заказ без номера ({self.pk})"
 
 
 def order_media_upload_to(instance, filename):

@@ -18,7 +18,7 @@ RUN pip install -r requirements.txt
 
 COPY . /app/
 
-RUN dos2unix /app/entrypoint.sh && chmod +x /app/entrypoint.sh
+# RUN dos2unix /app/entrypoint.sh && chmod +x /app/entrypoint.sh
 
 RUN mkdir -p /var/log/django/
 

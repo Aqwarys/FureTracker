@@ -56,12 +56,13 @@ class ReviewInline(admin.TabularInline):
 
 # --- Registering Models with Custom Admin Options ---
 
+
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     # Fields to display in the order list view
     list_display = (
         'order_number', 'order_status', 'client_name', 'client_phone',
-        'is_completed', 'created_at', 'updated_at',
+        'is_completed', 'assigned_employees_short', 'created_at', 'updated_at', # Добавлено: assigned_employees_short
         'get_media_count', 'get_comments_count', 'has_review_status'
     )
     # Filters in the sidebar for the order list
@@ -69,7 +70,8 @@ class OrderAdmin(admin.ModelAdmin):
     # Fields to search by
     search_fields = (
         'order_number', 'description', 'client_name', 'client_email', 'client_phone',
-        'order_status__name' # Allows searching by status name
+        'order_status__name',
+        'assigned_employees' # Добавлено: поиск по полю assigned_employees
     )
     # Date hierarchy for easy navigation by year/month/day
     date_hierarchy = 'created_at'
@@ -89,6 +91,10 @@ class OrderAdmin(admin.ModelAdmin):
             'fields': ('client_name', 'client_email', 'client_phone'),
             'description': 'Контактные данные клиента для этого заказа.',
         }),
+        ('Управление заказом', { # Новый или изменённый раздел
+            'fields': ('assigned_employees',), # Добавлено новое поле
+            'description': 'Информация о сотрудниках, работающих над заказом.'
+        }),
         ('Служебная информация', {
             'fields': ('access_token', 'is_completed', 'created_at', 'updated_at'),
             'classes': ('collapse',), # Make this section collapsible
@@ -104,11 +110,10 @@ class OrderAdmin(admin.ModelAdmin):
     # Annotate queryset for efficient counting in list_display
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
-        # Using `_count` suffix to avoid clashes if model has fields named 'media_count'
         queryset = queryset.annotate(
             _media_count=Count('media_items', distinct=True),
             _comments_count=Count('comments', distinct=True),
-            _has_review=Count('review', distinct=True) # Count related review objects
+            _has_review=Count('review', distinct=True)
         )
         return queryset
 
@@ -116,7 +121,7 @@ class OrderAdmin(admin.ModelAdmin):
     def get_media_count(self, obj):
         return obj._media_count
     get_media_count.short_description = 'Медиа (шт.)'
-    get_media_count.admin_order_field = '_media_count' # Allows sorting by this calculated field
+    get_media_count.admin_order_field = '_media_count'
 
     def get_comments_count(self, obj):
         return obj._comments_count
@@ -124,25 +129,19 @@ class OrderAdmin(admin.ModelAdmin):
     get_comments_count.admin_order_field = '_comments_count'
 
     def has_review_status(self, obj):
-        # Check if a review exists and if it's published or not
-        if hasattr(obj, 'review'): # Check if a review object is related
+        if hasattr(obj, 'review'):
             return obj.review.is_published
         return False
-    has_review_status.boolean = True # Display as a checkbox
+    has_review_status.boolean = True
     has_review_status.short_description = 'Отзыв опубликован?'
-    # Note: Can't easily sort by a boolean field that requires a relation lookup without more complex annotations.
 
-
-    # Custom admin actions
-    @admin.action(description='Пометить выбранные заказы как "Завершенные"')
-    def mark_orders_completed(self, request, queryset):
-        try:
-            completed_status = OrderStatus.objects.get(name='Завершен')
-            updated_count = queryset.update(order_status=completed_status)
-            self.message_user(request, f'{updated_count} заказов успешно помечены как "Завершенные".', level='success')
-        except OrderStatus.DoesNotExist:
-            self.message_user(request, 'Статус "Завершен" не найден. Проверьте модель OrderStatus.', level='error')
-    actions = [mark_orders_completed]
+    # Добавлено: Метод для сокращенного отображения сотрудников в списке
+    def assigned_employees_short(self, obj):
+        if obj.assigned_employees:
+            # Обрезаем текст, чтобы он не занимал слишком много места в list_display
+            return (obj.assigned_employees[:50] + '...') if len(obj.assigned_employees) > 50 else obj.assigned_employees
+        return '-'
+    assigned_employees_short.short_description = 'Сотрудники'
 
 import os
 @admin.register(OrderMedia)
