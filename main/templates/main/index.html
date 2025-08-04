@@ -14,470 +14,560 @@
 
     <style>
         /* Hero Section */
-.hero-section {
-    height: 95vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #333; /* Fallback dark background */
-    position: relative;
-    overflow: hidden;
-}
-.hero-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.4));
-    z-index: 1;
-}
-.hero-content {
-    position: relative;
-    z-index: 2;
-    color: #fff;
-    text-align: center;
-    padding: 20px;
-    max-width: 900px;
-    animation: fadeIn 1.8s ease-out forwards;
-}
-.hero-title {
-    font-size: 5rem;
-    line-height: 1.1;
-    margin-bottom: 25px;
-    text-shadow: 2px 2px 8px rgba(0,0,0,0.6);
-    color: #fff;
-    font-family: var(--accent-font); /* Uses variable from styles.css */
-}
-.hero-subtitle {
-    font-size: 1.8rem;
-    max-width: 700px;
-    margin: 0 auto 40px;
-    text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
-    color: #f0f0f0;
-    font-family: var(--primary-font); /* Uses variable from styles.css */
-}
-.hero-images {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-}
-.hero-images img {
-    position: absolute;
-    object-fit: cover;
-    filter: brightness(0.8);
-}
-.hero-img-main {
-    width: 100%;
-    height: 100%;
-    transform: scale(1.08);
-}
-.hero-img-secondary-1 {
-    width: 300px;
-    height: 300px;
-    border-radius: 20px;
-    bottom: 8%;
-    left: 12%;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.4);
-}
-.hero-img-secondary-2 {
-    width: 250px;
-    height: 250px;
-    border-radius: 20px;
-    top: 10%;
-    right: 10%;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.4);
-}
+        .hero-section {
+            height: 95vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #333; /* Fallback dark background */
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.4));
+            z-index: 1;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            max-width: 900px;
+            animation: fadeIn 1.8s ease-out forwards;
+        }
+        .hero-title {
+            font-size: 5rem;
+            line-height: 1.1;
+            margin-bottom: 25px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.6);
+            color: #fff;
+            font-family: var(--accent-font); /* Uses variable from styles.css */
+        }
+        .hero-subtitle {
+            font-size: 1.8rem;
+            max-width: 700px;
+            margin: 0 auto 40px;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+            color: #f0f0f0;
+            font-family: var(--primary-font); /* Uses variable from styles.css */
+        }
+        .hero-images {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        .hero-images img {
+            position: absolute;
+            object-fit: cover;
+            filter: brightness(0.8);
+        }
+        .hero-img-main {
+            width: 100%;
+            height: 100%;
+            transform: scale(1.08);
+        }
+        .hero-img-secondary-1 {
+            width: 300px;
+            height: 300px;
+            border-radius: 20px;
+            bottom: 8%;
+            left: 12%;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+        }
+        .hero-img-secondary-2 {
+            width: 250px;
+            height: 250px;
+            border-radius: 20px;
+            top: 10%;
+            right: 10%;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+        }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
-}
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-/* About Section / Features Grid */
-.about-section {
-    background-color: #fff;
-    padding-bottom: 70px;
-}
+        /* About Section / Features Grid */
+        .about-section {
+            background-color: #fff;
+            padding-bottom: 70px;
+        }
 
-.feature-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 30px;
-    justify-content: center;
-    align-items: stretch;
-    max-width: 90%;
-    margin: 0 auto;
-}
+        .feature-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+            justify-content: center;
+            align-items: stretch;
+            max-width: 90%;
+            margin: 0 auto;
+        }
 
-@media (min-width: 576px) {
-    .feature-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
+        @media (min-width: 576px) {
+            .feature-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
 
-@media (min-width: 768px) {
-    .feature-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
+        @media (min-width: 768px) {
+            .feature-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
 
-.feature-card {
-    background-color: #fcfcfc;
-    border-radius: 15px;
-    padding: 35px;
-    text-align: center;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-    transition: transform 0.4s ease, box-shadow 0.4s ease;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    border: 1px solid var(--color-border-light); /* Uses variable from styles.css */
-    overflow: hidden;
-}
-.feature-card:hover {
-    transform: translateY(-7px);
-    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.18);
-}
-.feature-icon {
-    font-size: 3.5rem;
-    color: var(--color-brand-primary); /* Uses variable from styles.css */
-    margin-bottom: 25px;
-}
-.feature-card h3 {
-    font-size: 1.6rem;
-    margin-bottom: 15px;
-    font-family: var(--primary-font); /* Uses variable from styles.css */
-    font-weight: 600;
-    color: var(--color-dark); /* Uses variable from styles.css */
-    min-height: 2.6em;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    line-height: 1.3;
-    flex-shrink: 0;
-}
-.feature-card p {
-    font-size: 1.05rem;
-    color: #666;
-    font-family: var(--primary-font); /* Uses variable from styles.css */
-    flex-grow: 1;
-    line-height: 1.6;
-    margin-bottom: 0;
-    display: -webkit-box;
-    -webkit-line-clamp: 4;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: normal;
-}
+        .feature-card {
+            background-color: #fcfcfc;
+            border-radius: 15px;
+            padding: 35px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            border: 1px solid var(--color-border-light); /* Uses variable from styles.css */
+            overflow: hidden;
+        }
+        .feature-card:hover {
+            transform: translateY(-7px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.18);
+        }
+        .feature-icon {
+            font-size: 3.5rem;
+            color: var(--color-brand-primary); /* Uses variable from styles.css */
+            margin-bottom: 25px;
+        }
+        .feature-card h3 {
+            font-size: 1.6rem;
+            margin-bottom: 15px;
+            font-family: var(--primary-font); /* Uses variable from styles.css */
+            font-weight: 600;
+            color: var(--color-dark); /* Uses variable from styles.css */
+            min-height: 2.6em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            line-height: 1.3;
+            flex-shrink: 0;
+        }
+        .feature-card p {
+            font-size: 1.05rem;
+            color: #666;
+            font-family: var(--primary-font); /* Uses variable from styles.css */
+            flex-grow: 1;
+            line-height: 1.6;
+            margin-bottom: 0;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: normal;
+        }
 
 
-/* Call to Action / Portfolio Preview Section */
-.cta-portfolio-section {
-    background-color: var(--color-light-gray); /* Uses variable from styles.css */
-    padding-bottom: 70px;
-}
-.cta-portfolio-section .section-title {
-    font-size: 2.8rem;
-    font-family: var(--accent-font); /* Uses variable from styles.css */
-}
-.portfolio-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 20px;
-    align-items: center;
-    justify-content: center;
-}
-.portfolio-thumb {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-    border-radius: 10px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-.portfolio-thumb:hover {
-    transform: scale(1.06);
-    box-shadow: 0 12px 25px rgba(0,0,0,0.25);
-}
+        /* Call to Action / Portfolio Preview Section */
+        .cta-portfolio-section {
+            background-color: var(--color-light-gray); /* Uses variable from styles.css */
+            padding-bottom: 70px;
+        }
+        .cta-portfolio-section .section-title {
+            font-size: 2.8rem;
+            font-family: var(--accent-font); /* Uses variable from styles.css */
+        }
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 20px;
+            align-items: center;
+            justify-content: center;
+        }
+        .portfolio-thumb {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .portfolio-thumb:hover {
+            transform: scale(1.06);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.25);
+        }
 
-/* Why Choose Us Section */
-.why-choose-us-section {
-    background-color: #fff;
-    padding-bottom: 70px;
-}
-.why-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-.why-list li {
-    font-size: 1.2rem;
-    margin-bottom: 25px;
-    display: flex;
-    align-items: flex-start;
-    color: #444;
-    font-family: var(--primary-font); /* Uses variable from styles.css */
-}
-.why-list li:last-child {
-    margin-bottom: 0;
-}
-.list-icon {
-    font-size: 1.8rem;
-    color: var(--color-brand-primary); /* Uses variable from styles.css */
-    margin-right: 20px;
-    width: 35px;
-    text-align: center;
-    flex-shrink: 0;
-}
-.why-choose-us-section img {
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-}
+        /* Why Choose Us Section */
+        .why-choose-us-section {
+            background-color: #fff;
+            padding-bottom: 70px;
+        }
+        .why-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .why-list li {
+            font-size: 1.2rem;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: flex-start;
+            color: #444;
+            font-family: var(--primary-font); /* Uses variable from styles.css */
+        }
+        .why-list li:last-child {
+            margin-bottom: 0;
+        }
+        .list-icon {
+            font-size: 1.8rem;
+            color: var(--color-brand-primary); /* Uses variable from styles.css */
+            margin-right: 20px;
+            width: 35px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .why-choose-us-section img {
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
 
-/* Consultation Form Section */
-.consultation-section {
-    background-image: url('{% static "images/consultation_bg.jpg" %}');
-    background-size: cover;
-    background-position: center;
-    position: relative;
-    z-index: 0;
-    padding: 120px 0;
-}
-.consultation-section::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(70, 95, 145, 0.9);
-    z-index: -1;
-}
-.consultation-card {
-    background-color: rgba(255, 255, 255, 0.18);
-    border-radius: 20px;
-    padding: 50px;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-}
-.consultation-card .section-title {
-    color: #fff;
-    margin-bottom: 20px;
-    text-shadow: 1px 1px 5px rgba(0,0,0,0.4);
-    font-family: var(--accent-font); /* Uses variable from styles.css */
-}
-.consultation-card .section-title::after {
-    background-color: #fff;
-    margin: 15px auto 0;
-}
-.consultation-card p {
-    color: #f0f0f0;
-    margin-bottom: 30px;
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
-    font-family: var(--primary-font); /* Uses variable from styles.css */
-}
-.form-control-custom {
-    background-color: rgba(255, 255, 255, 0.98);
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    border-radius: 10px;
-    padding: 15px 22px;
-    width: 100%;
-    color: var(--color-dark); /* Uses variable from styles.css */
-    font-size: 1.05rem;
-    transition: all 0.3s ease;
-    outline: none;
-    font-family: var(--primary-font); /* Uses variable from styles.css */
-}
-.form-control-custom::placeholder {
-    color: #888;
-    font-family: var(--primary-font); /* Uses variable from styles.css */
-}
-.form-control-custom:focus {
-    background-color: #fff;
-    border-color: var(--color-brand-primary); /* Uses variable from styles.css */
-    box-shadow: 0 0 0 0.3rem rgba(168, 126, 91, 0.3);
-}
-textarea.form-control-custom {
-    min-height: 140px;
-    resize: vertical;
-}
+        /* Consultation Form Section */
+        .consultation-section {
+            background-image: url('{% static "images/consultation_bg.jpg" %}');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            z-index: 0;
+            padding: 120px 0;
+        }
+        .consultation-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(70, 95, 145, 0.9);
+            z-index: -1;
+        }
+        .consultation-card {
+            background-color: rgba(255, 255, 255, 0.18);
+            border-radius: 20px;
+            padding: 50px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+        .consultation-card .section-title {
+            color: #fff;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 5px rgba(0,0,0,0.4);
+            font-family: var(--accent-font); /* Uses variable from styles.css */
+        }
+        .consultation-card .section-title::after {
+            background-color: #fff;
+            margin: 15px auto 0;
+        }
+        .consultation-card p {
+            color: #f0f0f0;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+            font-family: var(--primary-font); /* Uses variable from styles.css */
+        }
+        .form-control-custom {
+            background-color: rgba(255, 255, 255, 0.98);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 10px;
+            padding: 15px 22px;
+            width: 100%;
+            color: var(--color-dark); /* Uses variable from styles.css */
+            font-size: 1.05rem;
+            transition: all 0.3s ease;
+            outline: none;
+            font-family: var(--primary-font); /* Uses variable from styles.css */
+        }
+        .form-control-custom::placeholder {
+            color: #888;
+            font-family: var(--primary-font); /* Uses variable from styles.css */
+        }
+        .form-control-custom:focus {
+            background-color: #fff;
+            border-color: var(--color-brand-primary); /* Uses variable from styles.css */
+            box-shadow: 0 0 0 0.3rem rgba(168, 126, 91, 0.3);
+        }
+        textarea.form-control-custom {
+            min-height: 140px;
+            resize: vertical;
+        }
 
-/* Testimonials Section */
-.testimonials-section {
-    background-color: #fdfdfd;
-    padding-bottom: 70px;
-}
-.testimonial-card {
-    background-color: #fff;
-    border-radius: 15px;
-    padding: 35px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.09);
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    transition: transform 0.4s ease, box-shadow 0.4s ease;
-    border: 1px solid var(--color-border-light); /* Uses variable from styles.css */
-}
-.testimonial-card:hover {
-    transform: translateY(-7px);
-    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.18);
-}
-.testimonial-card .stars {
-    color: var(--color-brand-gold); /* Uses variable from styles.css */
-    font-size: 1.3rem;
-    margin-bottom: 20px;
-}
-.testimonial-text {
-    font-style: italic;
-    color: #444;
-    margin-bottom: 25px;
-    flex-grow: 1;
-    line-height: 1.6;
-    font-family: var(--primary-font); /* Uses variable from styles.css */
-}
-.testimonial-author {
-    font-weight: 700;
-    color: var(--color-dark); /* Uses variable from styles.css */
-    text-align: right;
-    margin-top: auto;
-    font-size: 1.05rem;
-    font-family: var(--primary-font); /* Uses variable from styles.css */
-}
+        /* Testimonials Section */
+        .testimonials-section {
+            background-color: #fdfdfd;
+            padding-bottom: 70px;
+        }
+        .testimonial-card {
+            background-color: #fff;
+            border-radius: 15px;
+            padding: 35px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.09);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            border: 1px solid var(--color-border-light); /* Uses variable from styles.css */
+        }
+        .testimonial-card:hover {
+            transform: translateY(-7px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.18);
+        }
+        .testimonial-card .stars {
+            color: var(--color-brand-gold); /* Uses variable from styles.css */
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+        }
+        .testimonial-text {
+            font-style: italic;
+            color: #444;
+            margin-bottom: 25px;
+            flex-grow: 1;
+            line-height: 1.6;
+            font-family: var(--primary-font); /* Uses variable from styles.css */
+        }
+        .testimonial-author {
+            font-weight: 700;
+            color: var(--color-dark); /* Uses variable from styles.css */
+            text-align: right;
+            margin-top: auto;
+            font-size: 1.05rem;
+            font-family: var(--primary-font); /* Uses variable from styles.css */
+        }
 
-/* Contacts Section */
-.contacts-section {
-    background-color: var(--color-dark); /* Uses variable from styles.css */
-    color: #fff;
-    padding: 100px 0 80px;
-}
-.contacts-section .section-title {
-    color: #fff;
-    font-family: var(--accent-font); /* Uses variable from styles.css */
-}
-.contacts-section .section-title::after {
-    background-color: #fff;
-}
-.contacts-section .section-subtitle {
-    color: rgba(255, 255, 255, 0.9);
-    font-family: var(--primary-font); /* Uses variable from styles.css */
-}
-.contact-item {
-    text-align: center;
-    margin-bottom: 40px;
-}
-.contact-icon {
-    font-size: 3rem;
-    color: var(--color-brand-primary); /* Uses variable from styles.css */
-    margin-bottom: 20px;
-}
-.contact-text {
-    font-size: 1.3rem;
-    font-weight: 600;
-    margin-bottom: 8px;
-    color: #fff;
-    font-family: var(--primary-font); /* Uses variable from styles.css */
-}
-.contact-small {
-    font-size: 1rem;
-    color: #bbb;
-    font-family: var(--primary-font); /* Uses variable from styles.css */
-}
-.social-links {
-    margin-top: 40px;
-}
-.social-icon-link {
-    color: #fff;
-    font-size: 2.2rem;
-    margin: 0 18px;
-    transition: color 0.3s ease, transform 0.2s ease;
-    display: inline-block;
-}
-.social-icon-link:hover {
-    color: var(--color-brand-primary); /* Uses variable from styles.css */
-    transform: translateY(-5px);
-}
+        /* Contacts Section */
+        .contacts-section {
+            background-color: var(--color-dark); /* Uses variable from styles.css */
+            color: #fff;
+            padding: 100px 0 80px;
+        }
+        .contacts-section .section-title {
+            color: #fff;
+            font-family: var(--accent-font); /* Uses variable from styles.css */
+        }
+        .contacts-section .section-title::after {
+            background-color: #fff;
+        }
+        .contacts-section .section-subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-family: var(--primary-font); /* Uses variable from styles.css */
+        }
+        .contact-item {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .contact-icon {
+            font-size: 3rem;
+            color: var(--color-brand-primary); /* Uses variable from styles.css */
+            margin-bottom: 20px;
+        }
+        .contact-text {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #fff;
+            font-family: var(--primary-font); /* Uses variable from styles.css */
+        }
+        .contact-small {
+            font-size: 1rem;
+            color: #bbb;
+            font-family: var(--primary-font); /* Uses variable from styles.css */
+        }
+        .social-links {
+            margin-top: 40px;
+        }
+        .social-icon-link {
+            color: #fff;
+            font-size: 2.2rem;
+            text-decoration: none;
+            margin: 0 18px;
+            transition: color 0.3s ease, transform 0.2s ease;
+            display: inline-block;
+        }
+        .social-icon-link:hover {
+            color: var(--color-brand-primary); /* Uses variable from styles.css */
+            transform: translateY(-5px);
+            text-decoration: underline;
 
-/* Responsive Adjustments for Index-Specific Elements */
-@media (max-width: 1199.98px) {
-    .hero-title { font-size: 4.5rem; }
-    .hero-subtitle { font-size: 1.6rem; }
-    .hero-img-secondary-1 { width: 250px; height: 250px; }
-    .hero-img-secondary-2 { width: 200px; height: 200px; }
-    .feature-card h3 { font-size: 1.5rem; }
-}
+        }
 
-@media (max-width: 991.98px) {
-    .hero-section { height: 80vh; }
-    .hero-title { font-size: 3.8rem; }
-    .hero-subtitle { font-size: 1.3rem; }
-    /* Hide secondary images on smaller screens using !important to override inline-block */
-    .hero-img-secondary-1, .hero-img-secondary-2 { display: none !important; }
-    .feature-card { padding: 30px; }
-    .feature-card h3 { min-height: unset; }
-    .feature-card p { -webkit-line-clamp: 3; }
-    .portfolio-grid { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
-    .portfolio-thumb { height: 170px; }
-    .why-list li { font-size: 1.1rem; margin-bottom: 20px; }
-    .list-icon { font-size: 1.6rem; margin-right: 15px; }
-    .consultation-section { padding: 100px 0; }
-    .consultation-card { padding: 40px; }
-    .form-control-custom { padding: 12px 20px; font-size: 1rem; }
-    textarea.form-control-custom { min-height: 120px; }
-    .contact-icon { font-size: 2.5rem; }
-    .contact-text { font-size: 1.2rem; }
-    .social-icon-link { font-size: 2rem; margin: 0 12px; }
-}
+        /* --- Акционный Стикер --- */
+        .promo-sticker {
+            background-color: #FFDA47; /* Яркий желтый цвет, можно настроить */
+            color: #333; /* Темный текст для контраста */
+            padding: 12px 25px;
+            border-radius: 50px; /* Сильно скругленные углы для эффекта "стикера" */
+            display: inline-flex; /* Чтобы элементы выстроились в ряд и контейнер был по размеру контента */
+            align-items: center; /* Выравнивание по центру по вертикали */
+            font-size: 1.1em;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Легкая тень для объема */
+            animation: pulse 2s infinite; /* Анимация "пульсации" для привлечения внимания */
+            transition: transform 0.3s ease;
+            cursor: pointer;
+            text-decoration: none; /* Убираем подчеркивание с самого стикера */
+        }
 
-@media (max-width: 767.98px) {
-    .hero-section { height: 70vh; }
-    .hero-title { font-size: 3rem; margin-bottom: 20px; }
-    .hero-subtitle { font-size: 1.1rem; margin-bottom: 30px; }
-    .feature-card { padding: 25px; border-radius: 12px; }
-    .feature-icon { font-size: 3rem; margin-bottom: 20px; }
-    .feature-card h3 { font-size: 1.3rem; }
-    .portfolio-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
-    .portfolio-thumb { height: 140px; }
-    .why-list li { font-size: 1rem; margin-bottom: 15px; }
-    .list-icon { font-size: 1.4rem; margin-right: 10px; }
-    .consultation-section { padding: 80px 0; }
-    .consultation-card { padding: 30px; border-radius: 15px; }
-    .testimonial-card { padding: 25px; border-radius: 12px; }
-    .testimonial-text { font-size: 0.95rem; margin-bottom: 20px; }
-    .contact-item { margin-bottom: 30px; }
-    .contact-icon { font-size: 2rem; }
-    .contact-text { font-size: 1.1rem; }
-    .social-icon-link { font-size: 1.8rem; margin: 0 10px; }
-}
+        .promo-sticker:hover {
+            transform: scale(1.03); /* Увеличение при наведении */
+            text-decoration: none; /* Убираем подчеркивание и при наведении */
+        }
 
-@media (max-width: 575.98px) {
-    .hero-section { height: 60vh; }
-    .hero-title { font-size: 2.5rem; }
-    .hero-subtitle { font-size: 0.9rem; }
-    .feature-card { padding: 20px; }
-    .feature-icon { font-size: 2.5rem; }
-    .feature-card h3 { font-size: 1.2rem; }
-    .portfolio-grid { grid-template-columns: 1fr; }
-    .portfolio-thumb { height: 180px; }
-    .consultation-card { padding: 20px; }
-    .form-control-custom { padding: 10px 15px; }
-    textarea.form-control-custom { min-height: 100px; }
-    .contact-item { margin-bottom: 25px; }
-    .social-icon-link { font-size: 1.5rem; margin: 0 8px; }
-}
+        .promo-icon {
+            margin-right: 10px;
+            font-size: 1.3em;
+            color: #c90000; /* Контрастный цвет для иконки, например, красный */
+        }
+
+        .promo-text {
+            white-space: nowrap; /* Чтобы текст акции не переносился на новую строку, если есть место */
+            margin-right: 10px;
+        }
+
+        .promo-link {
+            color: #007bff; /* Цвет ссылки, можно сделать темнее или контрастнее */
+            font-weight: bold;
+            text-decoration: underline; /* Подчеркивание для ссылки "Подробнее" */
+            margin-left: 5px; /* Отступ от текста акции */
+        }
+
+        .promo-link:hover {
+            color: #0056b3;
+            text-decoration: none;
+        }
+
+        /* Анимация пульсации */
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.01);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* Медиа-запросы для адаптивности, если текст слишком длинный на маленьких экранах */
+        @media (max-width: 767px) {
+            .promo-sticker {
+                font-size: 0.9em;
+                padding: 10px 15px;
+                display: block; /* На маленьких экранах можно сделать блочным, чтобы переносилось */
+                margin-left: auto;
+                margin-right: auto;
+                max-width: 90%; /* Ограничение ширины */
+                text-align: center;
+            }
+            .promo-text {
+                white-space: normal; /* Разрешаем перенос текста на маленьких экранах */
+                display: block; /* Каждая часть на новой строке */
+                margin-bottom: 5px;
+            }
+            .promo-link {
+                display: block;
+                margin-top: 5px;
+                margin-left: 0;
+            }
+            .promo-icon {
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+                margin-bottom: 5px;
+            }
+        }
+
+        /* Responsive Adjustments for Index-Specific Elements */
+        @media (max-width: 1199.98px) {
+            .hero-title { font-size: 4.5rem; }
+            .hero-subtitle { font-size: 1.6rem; }
+            .hero-img-secondary-1 { width: 250px; height: 250px; }
+            .hero-img-secondary-2 { width: 200px; height: 200px; }
+            .feature-card h3 { font-size: 1.5rem; }
+        }
+
+        @media (max-width: 991.98px) {
+            .hero-section { height: 80vh; }
+            .hero-title { font-size: 3.8rem; }
+            .hero-subtitle { font-size: 1.3rem; }
+            /* Hide secondary images on smaller screens using !important to override inline-block */
+            .hero-img-secondary-1, .hero-img-secondary-2 { display: none !important; }
+            .feature-card { padding: 30px; }
+            .feature-card h3 { min-height: unset; }
+            .feature-card p { -webkit-line-clamp: 3; }
+            .portfolio-grid { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+            .portfolio-thumb { height: 170px; }
+            .why-list li { font-size: 1.1rem; margin-bottom: 20px; }
+            .list-icon { font-size: 1.6rem; margin-right: 15px; }
+            .consultation-section { padding: 100px 0; }
+            .consultation-card { padding: 40px; }
+            .form-control-custom { padding: 12px 20px; font-size: 1rem; }
+            textarea.form-control-custom { min-height: 120px; }
+            .contact-icon { font-size: 2.5rem; }
+            .contact-text { font-size: 1.2rem; }
+            .social-icon-link { font-size: 2rem; margin: 0 12px; }
+        }
+
+        @media (max-width: 767.98px) {
+            .hero-section { height: 70vh; }
+            .hero-title { font-size: 3rem; margin-bottom: 20px; }
+            .hero-subtitle { font-size: 1.1rem; margin-bottom: 30px; }
+            .feature-card { padding: 25px; border-radius: 12px; }
+            .feature-icon { font-size: 3rem; margin-bottom: 20px; }
+            .feature-card h3 { font-size: 1.3rem; }
+            .portfolio-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
+            .portfolio-thumb { height: 140px; }
+            .why-list li { font-size: 1rem; margin-bottom: 15px; }
+            .list-icon { font-size: 1.4rem; margin-right: 10px; }
+            .consultation-section { padding: 80px 0; }
+            .consultation-card { padding: 30px; border-radius: 15px; }
+            .testimonial-card { padding: 25px; border-radius: 12px; }
+            .testimonial-text { font-size: 0.95rem; margin-bottom: 20px; }
+            .contact-item { margin-bottom: 30px; }
+            .contact-icon { font-size: 2rem; }
+            .contact-text { font-size: 1.1rem; }
+            .social-icon-link { font-size: 1.8rem; margin: 0 10px; }
+        }
+
+        @media (max-width: 575.98px) {
+            .hero-section { height: 60vh; }
+            .hero-title { font-size: 2.5rem; }
+            .hero-subtitle { font-size: 0.9rem; }
+            .feature-card { padding: 20px; }
+            .feature-icon { font-size: 2.5rem; }
+            .feature-card h3 { font-size: 1.2rem; }
+            .portfolio-grid { grid-template-columns: 1fr; }
+            .portfolio-thumb { height: 180px; }
+            .consultation-card { padding: 20px; }
+            .form-control-custom { padding: 10px 15px; }
+            textarea.form-control-custom { min-height: 100px; }
+            .contact-item { margin-bottom: 25px; }
+            .social-icon-link { font-size: 1.5rem; margin: 0 8px; }
+        }
     </style>
 {% endblock %}
 
@@ -488,6 +578,11 @@ textarea.form-control-custom {
             <h1 class="hero-title">Творим Дома <br> Из Мечты</h1>
             <p class="hero-subtitle">Ваш идеальный интерьер начинается с мебели, созданной специально для вас.</p>
             <a href="#consultation-form" class="btn btn-primary-custom hero-btn">Получить консультацию</a>
+            <div class="promo-sticker mt-4">
+                <i class="fas fa-tags promo-icon"></i>
+                <span class="promo-text">АКЦИЯ: Скидки до 30% на все шкафы-купе!</span>
+                <a href="#promo-details" class="promo-link">Подробнее</a> {# Ссылка на раздел с акцией или модальное окно #}
+            </div>
         </div>
         <div class="hero-images">
             <img src="https://images.unsplash.com/photo-1616137303871-05ce745f9cdb?q=80" alt="Современная мебель в гостиной" class="hero-img-main">
@@ -698,23 +793,18 @@ textarea.form-control-custom {
             <div class="row justify-content-center">
                 <div class="col-md-4 mb-4">
                     <div class="contact-item">
-                        <i class="fas fa-map-marker-alt contact-icon"></i>
-                        <p class="contact-text">Астана, Казахстан</p>
-                        <p class="contact-small">Проспект Акжол, 20</p>
+                        <a href="https://go.2gis.com/9fZTM" target="_blank" class="social-icon-link">
+                            <i class="fas fa-map-marker-alt contact-icon"></i>
+                            <p class="contact-text">Астана, Казахстан</p>
+                            <p class="contact-small">Проспект Акжол, 20</p>
+                        </a>
                     </div>
                 </div>
                 <div class="col-md-4 mb-4">
                     <div class="contact-item">
                         <i class="fas fa-phone contact-icon"></i>
-                        <p class="contact-text">+7 (777) 655-59-09</p>
+                        <p class="contact-text">+7 (778) 324-48-35</p>
                         <p class="contact-small">Позвоните нам</p>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-4">
-                    <div class="contact-item">
-                        <i class="fas fa-envelope contact-icon"></i>
-                        <p class="contact-text">info@baizhigitmebel.kz</p>
-                        <p class="contact-small">Напишите нам</p>
                     </div>
                 </div>
             </div>

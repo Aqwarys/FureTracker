@@ -1,35 +1,55 @@
 services:
-  db:
-    image: postgres:15-alpine
-    volumes:
-      - postgres_data:/var/lib/postgresql/data/
-    environment: # Переменные окружения для контейнера базы данных
-      POSTGRES_DB: mydatabase        # Имя вашей базы данных
-      POSTGRES_USER: admin_mebel          # Имя пользователя БД
-      POSTGRES_PASSWORD: ${DB_PASSWORD}  # Пароль пользователя БД (можно изменить)
-    ports:
-      - "5432:5432"
-
   web:
     build: .
-    command: python manage.py runserver 0.0.0.0:8000
+    env_file:
+      - ./.env
+    environment:
+      - DJANGO_SETTINGS_MODULE=furetracker.settings
+    expose:
+      - "8000"
     volumes:
       - .:/app
-      - django_logs:/var/log/django/
-    ports:
-      - "8000:8000"
-    environment:
-      DJANGO_DEBUG: "True"
-      SECRET_KEY: "your_insecure_local_secret_key"
-      DJANGO_ALLOWED_HOSTS: "localhost,127.0.0.1"
-      DATABASE_URL: "postgres://myuser:mypassword@db:5432/mydatabase"
-
-    env_file:
-      - .env # <--- Эта строка указывает Docker Compose, что он должен загружать переменные окружения из .env
-
+    restart: always
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  nginx:
+    image: nginx:1.25.3-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d/:/etc/nginx/conf.d/:ro
+      - nginx_logs:/var/log/nginx/
+    depends_on:
+      web:
+        condition: service_started
+    restart: always
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin_mebel -d mebeldata"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
 volumes:
-  postgres_data:
   django_logs:
+  nginx_logs:
+  postgres_data:

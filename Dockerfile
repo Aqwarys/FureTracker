@@ -10,15 +10,29 @@ RUN apt-get update && \
     build-essential \
     libpq-dev \
     netcat-traditional \
-    dos2unix \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt /app/
 RUN pip install -r requirements.txt
 
-COPY . /app/
 
-RUN dos2unix /app/entrypoint.sh && chmod +x /app/entrypoint.sh
+# RUN printf '#!/bin/sh\n\n' > /app/entrypoint.sh \
+#     && printf 'set -e\n\n' >> /app/entrypoint.sh \
+#     && printf 'until nc -z db 5432; do\n' >> /app/entrypoint.sh \
+#     && printf '  echo "Waiting for the database..."\n' >> /app/entrypoint.sh \
+#     && printf '  sleep 2\n' >> /app/entrypoint.sh \
+#     && printf 'done\n\n' >> /app/entrypoint.sh \
+#     && printf 'echo "Running database migrations..."\n' >> /app/entrypoint.sh \
+#     && printf 'python manage.py migrate --noinput\n\n' >> /app/entrypoint.sh \
+#     && printf 'echo "Collecting static files..."\n' >> /app/entrypoint.sh \
+#     && printf 'python manage.py collectstatic --noinput\n\n' >> /app/entrypoint.sh \
+#     && printf 'exec "$@"\n' >> /app/entrypoint.sh \
+#     && chmod +x /app/entrypoint.sh
+
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
+COPY . /app/
 
 RUN mkdir -p /var/log/django/
 
