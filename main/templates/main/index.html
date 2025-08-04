@@ -575,13 +575,13 @@
     <section class="hero-section">
         <div class="hero-overlay"></div>
         <div class="hero-content text-center">
-            <h1 class="hero-title">Творим Дома <br> Из Мечты</h1>
-            <p class="hero-subtitle">Ваш идеальный интерьер начинается с мебели, созданной специально для вас.</p>
+            <h1 class="hero-title">{{ site_settings.main_index_text|safe }}</h1>
+            <p class="hero-subtitle">{{ site_settings.second_index_text|safe }}</p>
             <a href="#consultation-form" class="btn btn-primary-custom hero-btn">Получить консультацию</a>
             {% if promotions %}
                 <div class="promo-sticker mt-4">
                     <i class="fas fa-tags promo-icon"></i>
-                    <span class="promo-text">АКЦИЯ: Скидки до 30% на все шкафы-купе!</span>
+                    <span class="promo-text">{{ site_settings.promo_text }}</span>
                     <a href="#promo-details" class="promo-link">Подробнее</a> {# Ссылка на раздел с акцией или модальное окно #}
                 </div>
             {% endif %}
@@ -609,7 +609,7 @@
                     <div class="feature-card">
                         <i class="fas fa-hammer feature-icon"></i>
                         <h3>Опыт с 2008 года</h3>
-                        <p>Более 15 лет мы успешно производим высококачественную мебель для дома.</p>
+                        <p>Более {{ site_settings.business_age }} лет мы успешно производим высококачественную мебель для дома.</p>
                     </div>
                 </div>
                 <div class="feature-item">
@@ -622,7 +622,7 @@
                 <div class="feature-item">
                     <div class="feature-card">
                         <i class="fas fa-tools feature-icon"></i>
-                        <h3>Мастера с 15-летним Стажем</h3>
+                        <h3>Мастера с {{ site_settings.business_age }}-летним Стажем</h3>
                         <p>Команда профессионалов с многолетним опытом гарантирует безупречное качество каждого изделия.</p>
                     </div>
                 </div>
@@ -801,24 +801,24 @@
             <div class="row justify-content-center">
                 <div class="col-md-4 mb-4">
                     <div class="contact-item">
-                        <a href="https://go.2gis.com/9fZTM" target="_blank" class="social-icon-link">
+                        <a href="{{ site_settings.twogis_link }}" target="_blank" class="social-icon-link">
                             <i class="fas fa-map-marker-alt contact-icon"></i>
                             <p class="contact-text">Астана, Казахстан</p>
-                            <p class="contact-small">Проспект Акжол, 20</p>
+                            <p class="contact-small">{{ site_settings.address }}</p>
                         </a>
                     </div>
                 </div>
                 <div class="col-md-4 mb-4">
                     <div class="contact-item">
                         <i class="fas fa-phone contact-icon"></i>
-                        <p class="contact-text">+7 (778) 324-48-35</p>
+                        <p class="contact-text">{{ site_settings.telephone_number }}</p>
                         <p class="contact-small">Позвоните нам</p>
                     </div>
                 </div>
             </div>
             <div class="social-links mt-4">
-                <a href="https://www.instagram.com/baizhigit_mebel" target="_blank" class="social-icon-link"><i class="fab fa-instagram"></i></a>
-                <a href="https://wa.me/77783244835" target="_blank" class="social-icon-link"><i class="fab fa-whatsapp"></i></a>
+                <a href="{{ site_settings.instagram_link }}" target="_blank" class="social-icon-link"><i class="fab fa-instagram"></i></a>
+                <a href="{{ site_settings.whatsapp_link }}" target="_blank" class="social-icon-link"><i class="fab fa-whatsapp"></i></a>
             </div>
         </div>
     </section>
