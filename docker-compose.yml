@@ -45,7 +45,7 @@ services:
       - certbot_www:/var/www/certbot # <-- Изменить
     depends_on:
       - nginx
-    command: "certonly --webroot -w /var/www/certbot -d baizhigit-mebel.kz -d www.baizhigit-mebel.kz --email zivichchanel01@gmail.com --rsa-key-size 4096 --agree-tos --no-eff-email --force-renewal" # Замените на ваши домены и email!
+    # command: "certonly --webroot -w /var/www/certbot -d baizhigit-mebel.kz -d www.baizhigit-mebel.kz --email zivichchanel01@gmail.com --rsa-key-size 4096 --agree-tos --no-eff-email --force-renewal" # Замените на ваши домены и email!
 
   db:
     image: postgres:16-alpine
