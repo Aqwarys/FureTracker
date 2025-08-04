@@ -1,0 +1,88 @@
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'css/promotions.css' %}"> {# Подключаем CSS #}
+
+<section class="promotions-section">
+    <h1>Наши актуальные акции</h1>
+
+    <div class="promotion-item-display">
+        <div class="promotion-banner-wrapper">
+            {% for promotion in promotions %}
+                <div class="promotion-banner-slide" data-index="{{ forloop.counter0 }}" style="background-image: url('{{ promotion.banner_image.url }}');"></div>
+            {% endfor %}
+        </div>
+        <div class="promotion-info-wrapper">
+            {% for promotion in promotions %}
+                <div class="promotion-info-content" data-index="{{ forloop.counter0 }}">
+                    <h2>{{ promotion.title }}</h2>
+                    <p>{{ promotion.description|linebreaksbr }}</p>
+                    <p><small>Действует до: {{ promotion.end_date|date:"d M Y H:i" }}</small></p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="promotion-pagination" id="pagination-dots">
+        {% for promotion in promotions %}
+            <span class="pagination-dot" data-index="{{ forloop.counter0 }}"></span>
+        {% endfor %}
+    </div>
+</section>
+
+{# JavaScript для логики слайдера #}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const banners = document.querySelectorAll('.promotion-banner-slide');
+        const infos = document.querySelectorAll('.promotion-info-content');
+        const dots = document.querySelectorAll('.pagination-dot');
+        let currentIndex = 0;
+        let slideInterval;
+
+        function showSlide(index) {
+            if (banners.length === 0) return;
+
+            banners.forEach((banner, i) => {
+                banner.classList.remove('active');
+                infos[i].classList.remove('active');
+                dots[i].classList.remove('active');
+            });
+
+            if (index >= 0 && index < banners.length) {
+                banners[index].classList.add('active');
+                infos[index].classList.add('active');
+                dots[index].classList.add('active');
+            }
+        }
+
+        function nextSlide() {
+            currentIndex = (currentIndex + 1) % banners.length;
+            showSlide(currentIndex);
+        }
+
+        function startSlideShow() {
+            if (banners.length > 1) { /* Слайд-шоу только если акций больше одной */
+                slideInterval = setInterval(nextSlide, 5000); // Меняем слайд каждые 5 секунд
+            }
+        }
+
+        function resetSlideShow() {
+            clearInterval(slideInterval);
+            startSlideShow();
+        }
+
+        // Инициализация
+        if (banners.length > 0) {
+            showSlide(currentIndex);
+            startSlideShow();
+        }
+
+        // Переключение по точкам
+        dots.forEach(dot => {
+            dot.addEventListener('click', function() {
+                currentIndex = parseInt(this.dataset.index);
+                showSlide(currentIndex);
+                resetSlideShow(); // Сбросить таймер при ручном переключении
+            });
+        });
+    });
+</script>

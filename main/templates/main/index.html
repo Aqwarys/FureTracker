@@ -578,11 +578,13 @@
             <h1 class="hero-title">Творим Дома <br> Из Мечты</h1>
             <p class="hero-subtitle">Ваш идеальный интерьер начинается с мебели, созданной специально для вас.</p>
             <a href="#consultation-form" class="btn btn-primary-custom hero-btn">Получить консультацию</a>
-            <div class="promo-sticker mt-4">
-                <i class="fas fa-tags promo-icon"></i>
-                <span class="promo-text">АКЦИЯ: Скидки до 30% на все шкафы-купе!</span>
-                <a href="#promo-details" class="promo-link">Подробнее</a> {# Ссылка на раздел с акцией или модальное окно #}
-            </div>
+            {% if promotions %}
+                <div class="promo-sticker mt-4">
+                    <i class="fas fa-tags promo-icon"></i>
+                    <span class="promo-text">АКЦИЯ: Скидки до 30% на все шкафы-купе!</span>
+                    <a href="#promo-details" class="promo-link">Подробнее</a> {# Ссылка на раздел с акцией или модальное окно #}
+                </div>
+            {% endif %}
         </div>
         <div class="hero-images">
             <img src="https://images.unsplash.com/photo-1616137303871-05ce745f9cdb?q=80" alt="Современная мебель в гостиной" class="hero-img-main">
@@ -717,6 +719,12 @@
             </div>
         </div>
     </section>
+
+    <div id="promo-details">
+        {% if promotions %}
+            {% include "promotions/promotions_list.html" with promotions=promotions %}
+        {% endif %}
+    </div>
 
     <section class="consultation-section py-5 bg-accent-blue" id="consultation-form">
         <div class="container">

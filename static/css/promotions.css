@@ -1,0 +1,196 @@
+/* static/css/promotions.css - Обновленный CSS с исправлением длинных слов */
+
+/* --- Общая секция акций --- */
+.promotions-section {
+    max-width: 1400px;
+    margin: 60px auto;
+    padding: 30px;
+    background-color: #f8f8f8;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.promotions-section h1 {
+    text-align: center;
+    color: #333;
+    font-size: 2.8em;
+    margin-bottom: 40px;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+.promotions-section h1::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 0;
+    width: 80px;
+    height: 4px;
+    background-color: #ff6f61;
+    border-radius: 2px;
+}
+
+/* --- Контейнер для баннера и информации --- */
+.promotion-item-display {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    background-color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    position: relative;
+}
+
+/* Адаптивность для экранов до 992px */
+@media (max-width: 992px) {
+    .promotion-item-display {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .promotions-section {
+        padding: 20px;
+        margin: 30px auto;
+    }
+    .promotions-section h1 {
+        font-size: 2em;
+        margin-bottom: 25px;
+    }
+}
+
+/* --- Область баннера --- */
+.promotion-banner-wrapper {
+    flex: 2;
+    position: relative;
+    height: 450px;
+    overflow: hidden;
+}
+@media (max-width: 992px) {
+    .promotion-banner-wrapper {
+        min-width: 100%;
+        height: 280px;
+    }
+}
+
+.promotion-banner-slide {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+.promotion-banner-slide.active {
+    opacity: 1;
+}
+
+/* --- Область информации (текст) --- */
+.promotion-info-wrapper {
+    flex: 1;
+    min-width: 35%;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    height: 400px;
+    box-sizing: border-box;
+}
+@media (max-width: 992px) {
+    .promotion-info-wrapper {
+        min-width: 100%;
+        height: auto;
+    }
+}
+
+.promotion-info-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+    padding: 30px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    overflow-y: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.promotion-info-content::-webkit-scrollbar {
+    display: none;
+}
+
+.promotion-info-content.active {
+    opacity: 1;
+}
+
+.promotion-info-content h2 {
+    font-size: 2.2em;
+    color: #444;
+    margin-bottom: 15px;
+    line-height: 1.2;
+    /* КЛЮЧЕВОЕ ИЗМЕНЕНИЕ ДЛЯ ПЕРЕНОСА */
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+.promotion-info-content p {
+    color: #666;
+    line-height: 1.8;
+    font-size: 1.1em;
+    margin-bottom: 20px;
+    flex-grow: 1;
+    /* КЛЮЧЕВОЕ ИЗМЕНЕНИЕ ДЛЯ ПЕРЕНОСА */
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+.promotion-info-content small {
+    display: block;
+    margin-top: 10px;
+    font-size: 0.9em;
+    color: #888;
+    flex-shrink: 0;
+}
+
+/* --- Точки пагинации --- */
+.promotion-pagination {
+    text-align: center;
+    margin-top: 35px;
+}
+.pagination-dot {
+    height: 14px;
+    width: 14px;
+    margin: 0 7px;
+    background-color: #ddd;
+    border-radius: 50%;
+    display: inline-block;
+    transition: background-color 0.4s ease, transform 0.3s ease;
+    cursor: pointer;
+    border: 1px solid #ccc;
+}
+.pagination-dot.active {
+    background-color: #ff6f61;
+    transform: scale(1.2);
+    border-color: #ff6f61;
+}
+
+/* --- Сообщение, если акций нет --- */
+.no-promotions-message {
+    text-align: center;
+    margin-top: 50px;
+    padding: 30px;
+    font-size: 1.6em;
+    color: #777;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}

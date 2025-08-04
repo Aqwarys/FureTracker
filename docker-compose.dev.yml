@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  web:
+    build: . # Используем Dockerfile из текущей директории
+    env_file:
+      - ./.env # Используем ваш .env файл. Убедитесь, что там есть локальные настройки DB.
+    environment:
+      # Возможно, вы захотите использовать отдельный settings-файл для разработки
+      # - DJANGO_SETTINGS_MODULE=furetracker.settings.local
+      - DJANGO_SETTINGS_MODULE=furetracker.settings
+    ports:
+      - "8000:8000" # Проброс порта Django на вашу локальную машину для прямого доступа
+    volumes:
+      - .:/app # Важно: монтируем текущую директорию для live-изменений кода
+    restart: "no" # В dev-среде нет необходимости в постоянном перезапуске
+    depends_on:
+      db:
+        condition: service_healthy # Зависимость от готовности БД
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s # Более короткий период запуска для разработки
+
+  nginx:
+    image: nginx:1.25.3-alpine
+    ports:
+      - "80:80" # Только 80 порт для HTTP. HTTPS не нужен локально.
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      # Монтируем специфичный конфиг для локальной разработки Nginx
+      - ./nginx/conf.d/default.dev.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      web:
+        condition: service_started # Зависимость от готовности Django
+    restart: "no" # В dev-среде нет необходимости в постоянном перезапуске
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      # Можно задать значения по умолчанию, если их нет в .env
+      POSTGRES_DB: ${POSTGRES_DB:-mebeldata_dev}
+      POSTGRES_USER: ${POSTGRES_USER:-admin_mebel_dev}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-devpassword} # Лёгкий пароль для разработки
+    volumes:
+      - postgres_data_local:/var/lib/postgresql/data # Отдельный том для локальной БД
+    restart: "no"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-admin_mebel_dev} -d ${POSTGRES_DB:-mebeldata_dev}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+volumes:
+  postgres_data_local: # Объявляем локальный том для БД
+  # Certbot-тома здесь не нужны!
