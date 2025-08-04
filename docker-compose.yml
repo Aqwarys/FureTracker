@@ -28,10 +28,24 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./nginx/conf.d/:/etc/nginx/conf.d/:ro
       - nginx_logs:/var/log/nginx/
+      # Теперь используем именованные тома для Certbot
+      - certbot_etc:/etc/letsencrypt # Сертификаты Certbot
+      - certbot_var:/var/lib/letsencrypt # Данные Certbot
+      - certbot_www:/var/www/certbot # Для проверки владения доменом
     depends_on:
       web:
         condition: service_started
     restart: always
+
+  certbot: # НОВЫЙ СЕРВИС CERTBOT
+    image: certbot/certbot
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt
+      - /var/lib/letsencrypt:/var/lib/letsencrypt
+      - /var/www/certbot:/var/www/certbot
+    depends_on:
+      - nginx
+    command: "certonly --webroot -w /var/www/certbot -d baizhigit-mebel.kz -d www.baizhigit-mebel.kz --email zivichchanel01@gmail.com --rsa-key-size 4096 --agree-tos --no-eff-email --force-renewal" # Замените на ваши домены и email!
 
   db:
     image: postgres:16-alpine
@@ -53,3 +67,6 @@ volumes:
   django_logs:
   nginx_logs:
   postgres_data:
+  certbot_etc: # Новый том для /etc/letsencrypt
+  certbot_var: # Новый том для /var/lib/letsencrypt
+  certbot_www: # Новый том для /var/www/certbot
