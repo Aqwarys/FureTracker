@@ -107,11 +107,36 @@
     .feature-grid {
         grid-template-columns: repeat(2, 1fr);
     }
+    .faq-section .section-title {
+        font-size: 1.6em;
+    }
+    .accordion-button {
+        font-size: 0.9em;
+        padding: 8px 12px;
+    }
+    .accordion-body {
+        font-size: 0.8em;
+        padding: 8px 12px;
+    }
 }
 
 @media (min-width: 768px) {
     .feature-grid {
         grid-template-columns: repeat(3, 1fr);
+    }
+    .faq-section .section-title {
+        font-size: 2em;
+    }
+    .faq-section .section-subtitle {
+        font-size: 0.9em;
+    }
+    .accordion-button {
+        font-size: 0.95em;
+        padding: 10px 15px;
+    }
+    .accordion-body {
+        font-size: 0.85em;
+        padding: 10px 15px;
     }
 }
 
@@ -444,6 +469,121 @@ textarea.form-control-custom {
     color: #0056b3;
     text-decoration: none;
 }
+
+/* --- Секция FAQ (Часто задаваемые вопросы) --- */
+.faq-section {
+    background-color: #fdfdfd; /* Светлый фон для секции */
+    padding-top: 40px; /* Уменьшаем padding */
+    padding-bottom: 40px; /* Уменьшаем padding */
+}
+
+.faq-section .section-title {
+    font-size: 2.5em; /* Уменьшаем размер заголовка */
+    font-family: var(--accent-font);
+    font-weight: 700;
+    color: var(--color-dark);
+    margin-bottom: 15px; /* Уменьшаем отступ */
+    position: relative;
+    padding-bottom: 10px; /* Уменьшаем padding */
+}
+
+.faq-section .section-title::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 0;
+    width: 70px; /* Уменьшаем ширину линии */
+    height: 3px; /* Уменьшаем толщину линии */
+    background-color: var(--color-brand-primary);
+    border-radius: 3px;
+}
+
+.faq-section .section-subtitle {
+    font-family: var(--primary-font);
+    font-size: 1em; /* Уменьшаем размер подзаголовка */
+    color: #777;
+    margin-bottom: 25px; /* Уменьшаем отступ */
+}
+
+/* Стилизация аккордеона Bootstrap */
+.accordion {
+    max-width: 700px; /* Уменьшаем максимальную ширину аккордеона */
+    margin: 0 auto;
+    border: none;
+}
+
+.accordion-item {
+    margin-bottom: 8px; /* Уменьшаем отступы между элементами аккордеона */
+    border: 1px solid var(--color-border-light);
+    border-radius: 8px; /* Чуть уменьшаем скругление */
+    box-shadow: 0 3px 10px rgba(0,0,0,0.06); /* Мягкая тень */
+    overflow: hidden;
+    transition: all 0.2s ease;
+}
+
+.accordion-item:last-child {
+    margin-bottom: 0;
+}
+
+.accordion-item:hover {
+    box-shadow: 0 6px 15px rgba(0,0,0,0.1); /* Усиление тени при наведении */
+    transform: translateY(-1px); /* Легкий подъем */
+}
+
+.accordion-header {
+    background-color: #fff;
+    border-bottom: none;
+}
+
+.accordion-button {
+    font-family: var(--primary-font);
+    font-size: 1.05em; /* Уменьшаем размер шрифта кнопки */
+    font-weight: 600;
+    color: var(--color-dark);
+    background-color: #fff !important;
+    padding: 12px 18px; /* Уменьшаем padding кнопки */
+    border-radius: 8px !important; /* Соответствует скруглению item */
+    text-align: left;
+    transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: none !important;
+}
+
+.accordion-button:not(.collapsed) {
+    color: var(--color-brand-primary);
+    background-color: #f0f0f0 !important; /* Более светлый фон для активной кнопки */
+    border-bottom: 1px solid var(--color-border-light);
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}
+
+.accordion-button:focus {
+    outline: 0;
+    box-shadow: 0 0 0 0.15rem rgba(168, 126, 91, 0.15) !important; /* Менее выраженная тень фокуса */
+}
+
+/* Стилизация иконки стрелки */
+.accordion-button::after {
+    filter: invert(30%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(0%) contrast(100%);
+    transition: transform 0.2s ease;
+    font-size: 0.8em; /* Чуть уменьшаем размер стрелки */
+}
+
+.accordion-button:not(.collapsed)::after {
+    filter: invert(30%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(0%) contrast(100%);
+    transform: rotate(-180deg);
+}
+
+.accordion-body {
+    font-family: var(--primary-font);
+    font-size: 0.9em; /* Уменьшаем размер шрифта тела аккордеона */
+    color: #555;
+    line-height: 1.5;
+    padding: 12px 18px; /* Уменьшаем padding тела аккордеона */
+    background-color: #fff;
+}
+
+
 
 /* Анимация пульсации */
 @keyframes pulse {

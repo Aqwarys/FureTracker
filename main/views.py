@@ -4,6 +4,7 @@ from django.views.decorators.http import require_http_methods
 
 from consultations.forms import ConsultationRequestForm
 from promotions.models import Promotion
+from core.models import FAQ
 import logging
 
 logger = logging.getLogger(__name__)
@@ -13,8 +14,11 @@ def index(request):
     logger.info("Запрос на главную страницу")
     promotions = Promotion.objects.filter(is_active=True).order_by('-order', '-created_at')
     logger.info("Получены активные промоакции")
+
+    faqs = FAQ.objects.all().order_by('order')
+    logger.info("Получены вопросы-ответы")
     form = ConsultationRequestForm()
-    return render(request, 'main/index.html', {'form': form, 'promotions': promotions})
+    return render(request, 'main/index.html', {'form': form, 'promotions': promotions, 'faqs': faqs})
 
 @require_http_methods(["POST"])
 def consultation_submit_view(request):
