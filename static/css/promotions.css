@@ -1,196 +1,205 @@
-/* static/css/promotions.css - Обновленный CSS с исправлением длинных слов */
-
-/* --- Общая секция акций --- */
-.promotions-section {
-    max-width: 1400px;
-    margin: 60px auto;
-    padding: 30px;
-    background-color: #f8f8f8;
-    border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-    overflow: hidden;
+/* Общие стили для страницы акций */
+.container {
+    max-width: 1400px; /* Увеличиваем максимальную ширину контейнера */
+    margin: 0 auto;
+    padding: 0 15px; /* Добавляем горизонтальный padding для контейнера */
 }
 
-.promotions-section h1 {
-    text-align: center;
-    color: #333;
-    font-size: 2.8em;
-    margin-bottom: 40px;
+/* Секция заголовка на странице акций */
+.section-title {
+    font-size: 3.2em; /* Чуть увеличиваем размер заголовка */
+    font-family: var(--accent-font);
+    font-weight: 700;
+    color: var(--color-dark);
+    margin-bottom: 20px;
     position: relative;
-    padding-bottom: 10px;
+    padding-bottom: 15px;
 }
 
-.promotions-section h1::after {
+.section-title::after {
     content: '';
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
     bottom: 0;
-    width: 80px;
-    height: 4px;
-    background-color: #ff6f61;
-    border-radius: 2px;
+    width: 100px; /* Делаем линию шире */
+    height: 5px; /* Делаем линию толще */
+    background-color: var(--color-brand-primary);
+    border-radius: 3px;
 }
 
-/* --- Контейнер для баннера и информации --- */
-.promotion-item-display {
+/* Сетка для карточек акций */
+.promotions-grid {
+    display: grid;
+    /* ИЗМЕНЕНО: Ограничиваем максимальную ширину колонки до 550px */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 550px));
+    gap: 40px; /* Увеличиваем отступы между карточками */
+    padding: 20px 0; /* Вертикальный padding для сетки */
+    justify-content: center; /* ИЗМЕНЕНО: Центрируем карточки в сетке */
+}
+
+/* Анимация появления карточек */
+@keyframes fadeInSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Стили для каждой карточки акции */
+.promo-card {
     display: flex;
-    align-items: center;
-    gap: 30px;
+    flex-direction: column; /* Всегда баннер сверху, текст снизу */
     background-color: #fff;
-    border-radius: 10px;
+    border-radius: 15px; /* Более выраженное скругление */
+    box-shadow: 0 12px 30px rgba(0,0,0,0.12); /* Более мягкая и глубокая тень */
     overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    border: 1px solid var(--color-border-light);
+    transition: transform 0.4s ease, box-shadow 0.4s ease; /* Плавный переход при наведении */
+
+    opacity: 0; /* Изначально скрыты для анимации */
+    animation: fadeInSlideUp 0.8s ease-out forwards; /* Применяем анимацию */
+
+    /* ИЗМЕНЕНО: Дополнительное ограничение ширины для самой карточки */
+    max-width: 550px;
+    margin: 0 auto; /* Центрируем саму карточку внутри ее ячейки сетки */
+}
+
+/* Задержка анимации для последовательного появления карточек */
+.promotions-grid .promo-card:nth-child(1) { animation-delay: 0.1s; }
+.promotions-grid .promo-card:nth-child(2) { animation-delay: 0.2s; }
+.promotions-grid .promo-card:nth-child(3) { animation-delay: 0.3s; }
+.promotions-grid .promo-card:nth-child(4) { animation-delay: 0.4s; }
+.promotions-grid .promo-card:nth-child(5) { animation-delay: 0.5s; }
+/* Добавьте больше, если у вас много акций */
+
+.promo-card:hover {
+    transform: translateY(-8px); /* Легкий подъем при наведении */
+    box-shadow: 0 18px 40px rgba(0,0,0,0.18); /* Усиление тени при наведении */
+}
+
+/* Область баннера */
+.promo-card-banner {
+    width: 100%; /* Баннер занимает всю ширину карточки */
+    height: 250px; /* Фиксированная высота баннера на десктопе */
     position: relative;
+    overflow: hidden; /* Скрываем части изображения, выходящие за границы */
+    border-radius: 15px 15px 0 0; /* Скругление только сверху */
 }
 
-/* Адаптивность для экранов до 992px */
-@media (max-width: 992px) {
-    .promotion-item-display {
-        flex-direction: column;
-        align-items: stretch;
-    }
-    .promotions-section {
-        padding: 20px;
-        margin: 30px auto;
-    }
-    .promotions-section h1 {
-        font-size: 2em;
-        margin-bottom: 25px;
-    }
-}
-
-/* --- Область баннера --- */
-.promotion-banner-wrapper {
-    flex: 2;
-    position: relative;
-    height: 450px;
-    overflow: hidden;
-}
-@media (max-width: 992px) {
-    .promotion-banner-wrapper {
-        min-width: 100%;
-        height: 280px;
-    }
-}
-
-.promotion-banner-slide {
+.promo-card-banner img {
     width: 100%;
-    height: 100%;
-    background-size: cover;
-    background-position: center;
-    position: absolute;
-    top: 0;
-    left: 0;
-    opacity: 0;
-    transition: opacity 1s ease-in-out;
-}
-.promotion-banner-slide.active {
-    opacity: 1;
-}
-
-/* --- Область информации (текст) --- */
-.promotion-info-wrapper {
-    flex: 1;
-    min-width: 35%;
-    padding: 30px;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    overflow: hidden;
-    height: 400px;
-    box-sizing: border-box;
-}
-@media (max-width: 992px) {
-    .promotion-info-wrapper {
-        min-width: 100%;
-        height: auto;
-    }
-}
-
-.promotion-info-content {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    transition: opacity 1s ease-in-out;
-    padding: 30px;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    overflow-y: auto;
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-}
-
-.promotion-info-content::-webkit-scrollbar {
-    display: none;
-}
-
-.promotion-info-content.active {
-    opacity: 1;
-}
-
-.promotion-info-content h2 {
-    font-size: 2.2em;
-    color: #444;
-    margin-bottom: 15px;
-    line-height: 1.2;
-    /* КЛЮЧЕВОЕ ИЗМЕНЕНИЕ ДЛЯ ПЕРЕНОСА */
-    word-break: break-word;
-    overflow-wrap: break-word;
-}
-.promotion-info-content p {
-    color: #666;
-    line-height: 1.8;
-    font-size: 1.1em;
-    margin-bottom: 20px;
-    flex-grow: 1;
-    /* КЛЮЧЕВОЕ ИЗМЕНЕНИЕ ДЛЯ ПЕРЕНОСА */
-    word-break: break-word;
-    overflow-wrap: break-word;
-}
-.promotion-info-content small {
+    height: 100%; /* Изображение занимает всю высоту родителя */
+    object-fit: cover; /* Обрезает изображение, чтобы оно покрывало область */
     display: block;
-    margin-top: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08); /* Легкая тень для изображения */
+}
+
+/* Область текста */
+.promo-card-body {
+    flex-grow: 1; /* Позволяет текстовому блоку занимать оставшееся пространство */
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* Выравнивание контента по верху */
+}
+
+.promo-card-body h2 {
+    font-family: var(--accent-font);
+    font-size: 2.5em; /* Увеличиваем размер заголовка */
+    color: var(--color-dark);
+    margin-bottom: 15px;
+    line-height: 1.2; /* Улучшаем межстрочный интервал */
+    word-break: break-word; /* Перенос длинных слов */
+    overflow-wrap: break-word;
+}
+
+.promo-card-body p {
+    font-family: var(--primary-font);
+    font-size: 1.05em; /* Чуть уменьшаем размер текста */
+    color: #555; /* Делаем текст чуть темнее для лучшей читаемости */
+    line-height: 1.7; /* Увеличиваем межстрочный интервал */
+    flex-grow: 1; /* Позволяет параграфу занимать доступное пространство */
+    word-break: break-word; /* Перенос длинных слов */
+    overflow-wrap: break-word;
+    margin-bottom: 15px;
+}
+
+.promo-card-date {
+    font-family: var(--primary-font);
     font-size: 0.9em;
     color: #888;
-    flex-shrink: 0;
+    margin-top: 10px;
+    flex-shrink: 0; /* Предотвращаем сжатие даты */
 }
 
-/* --- Точки пагинации --- */
-.promotion-pagination {
-    text-align: center;
-    margin-top: 35px;
-}
-.pagination-dot {
-    height: 14px;
-    width: 14px;
-    margin: 0 7px;
-    background-color: #ddd;
-    border-radius: 50%;
-    display: inline-block;
-    transition: background-color 0.4s ease, transform 0.3s ease;
-    cursor: pointer;
-    border: 1px solid #ccc;
-}
-.pagination-dot.active {
-    background-color: #ff6f61;
-    transform: scale(1.2);
-    border-color: #ff6f61;
-}
-
-/* --- Сообщение, если акций нет --- */
+/* Сообщение, если акций нет */
 .no-promotions-message {
     text-align: center;
-    margin-top: 50px;
-    padding: 30px;
-    font-size: 1.6em;
+    padding: 50px;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    border: 1px solid #e9ecef;
+    font-family: var(--primary-font);
+    font-size: 1.4em;
     color: #777;
-    background-color: #f0f0f0;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+/* Медиа-запросы для мобильных устройств */
+@media (max-width: 992px) {
+    .promotions-grid {
+        grid-template-columns: 1fr; /* Одна колонка на планшетах и мобильных */
+        gap: 30px; /* Уменьшаем отступ */
+    }
+
+    .promo-card {
+        padding-bottom: 0; /* Убираем padding-bottom, так как он на .promo-card-body */
+    }
+
+    .promo-card-banner {
+        height: 180px; /* Уменьшена высота баннера на мобильных */
+        border-radius: 15px 15px 0 0; /* Сохраняем скругление сверху */
+    }
+
+    .promo-card-body {
+        padding: 20px; /* Уменьшаем padding для текста */
+    }
+
+    .promo-card-body h2 {
+        font-size: 1.8em;
+    }
+
+    .promo-card-body p {
+        font-size: 1em;
+    }
+
+    .section-title {
+        font-size: 2.5em;
+    }
+}
+
+@media (max-width: 576px) {
+    .promotions-grid {
+        gap: 20px;
+    }
+    .promo-card-banner {
+        height: 150px; /* Еще меньше высота на очень маленьких экранах */
+    }
+    .promo-card-body {
+        padding: 15px;
+    }
+    .promo-card-body h2 {
+        font-size: 1.5em;
+    }
+    .promo-card-body p {
+        font-size: 0.9em;
+    }
+    .section-title {
+        font-size: 2em;
+    }
 }

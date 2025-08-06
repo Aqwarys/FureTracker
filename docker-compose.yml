@@ -5,6 +5,7 @@ services:
       - ./.env
     environment:
       - DJANGO_SETTINGS_MODULE=furetracker.settings
+      - DJANGO_ENV=production
     expose:
       - "8000"
     volumes:

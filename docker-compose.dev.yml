@@ -9,6 +9,7 @@ services:
       # Возможно, вы захотите использовать отдельный settings-файл для разработки
       # - DJANGO_SETTINGS_MODULE=furetracker.settings.local
       - DJANGO_SETTINGS_MODULE=furetracker.settings
+      - DJANGO_ENV=development # Указываем, что это продакшен среда
     ports:
       - "8000:8000" # Проброс порта Django на вашу локальную машину для прямого доступа
     volumes:

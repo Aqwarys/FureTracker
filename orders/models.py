@@ -39,7 +39,6 @@ class Order(models.Model):
     def __str__(self):
         return self.order_number or f"Заказ без номера ({self.pk})"
 
-
 def order_media_upload_to(instance, filename):
     # Эта функция формирует путь, который будет сохранен в базе данных
     # и который S3 StorageBackend будет использовать относительно 'location' (media/).
