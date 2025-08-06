@@ -66,3 +66,17 @@ class SiteSettings(models.Model):
     class Meta:
         verbose_name = 'Настройки сайта'
         verbose_name_plural = 'Настройки сайта'
+
+
+class FAQ(models.Model):
+    question = models.CharField(max_length=255, blank=False, null=False, verbose_name='Вопрос')
+    answer = models.TextField(max_length=500, blank=False, null=False, verbose_name='Ответ')
+    order = models.IntegerField(default=0, verbose_name='Порядковый номер')
+
+    class Meta:
+        verbose_name = 'Вопрос-ответ'
+        verbose_name_plural = 'Вопрос-ответ'
+        ordering = ['order', 'question']
+
+    def __str__(self):
+        return self.question

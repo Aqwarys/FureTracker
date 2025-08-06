@@ -1,5 +1,5 @@
 from django.contrib import admin
-from core.models import OrderStatus, SiteSettings
+from core.models import OrderStatus, SiteSettings, FAQ
 
 admin.site.site_header = "Панель управления Бизнесом"
 admin.site.site_title = "Управление Заказами и Контентом"
@@ -44,7 +44,47 @@ class SiteSettingsAdmin(admin.ModelAdmin):
     # которое показывает его название.
     list_display = ('__str__',)
 
-    # Также можно добавить help_text в саму модель для пояснений
-    # Например:
-    # class SiteSettings(...):
-    #     promo_text = models.CharField(..., help_text="Текст, который будет отображаться в шапке сайта")
+
+
+@admin.register(FAQ)
+class FAQAdmin(admin.ModelAdmin):
+    """
+    Кастомная административная панель для модели FAQ.
+    Улучшает отображение, поиск и редактирование вопросов и ответов.
+    """
+    list_display = (
+        'get_truncated_question',
+        'get_truncated_answer',
+        'order',
+    )
+
+    search_fields = (
+        'question',
+        'answer',
+    )
+
+
+    ordering = ('order', 'question',)
+
+    fieldsets = (
+        (None, {
+            'fields': ('question', 'answer',)
+        }),
+        ('Настройки отображения', {
+            'fields': ('order',),
+            'classes': ('collapse',),
+            'description': 'Установите порядок отображения вопроса.'
+        }),
+    )
+
+    list_per_page = 25
+
+    def get_truncated_question(self, obj):
+        """Возвращает укороченный вопрос для отображения в списке."""
+        return obj.question[:75] + '...' if len(obj.question) > 75 else obj.question
+    get_truncated_question.short_description = 'Вопрос' 
+
+    def get_truncated_answer(self, obj):
+        """Возвращает укороченный ответ для отображения в списке."""
+        return obj.answer[:100] + '...' if len(obj.answer) > 100 else obj.answer
+    get_truncated_answer.short_description = 'Ответ'
