@@ -1,4 +1,8 @@
-/* Обертка для изоляции стилей страницы деталей заказа */
+/*
+ * ========================================
+ * Общие стили для карточек контента
+ * ========================================
+ */
 .order-detail-page {
     background-color: #f8f9fa;
     font-family: 'Inter', sans-serif;
@@ -7,7 +11,9 @@
 }
 
 .order-detail-page .container {
-    max-width: 1000px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
 }
 
 .order-detail-page .content-card {
@@ -26,17 +32,20 @@
     color: #212529;
     margin-bottom: 1.5rem;
 }
+
 .order-detail-page h1 {
     font-size: 2.8rem;
     text-align: center;
     margin-bottom: 2rem;
 }
+
 .order-detail-page h2 {
     font-size: 2.2rem;
     text-align: center;
     margin-bottom: 2.5rem;
     position: relative;
 }
+
 .order-detail-page h2::after {
     content: '';
     position: absolute;
@@ -48,13 +57,14 @@
     background-color: #007bff;
     border-radius: 3px;
 }
+
 .order-detail-page h3 {
     font-size: 1.8rem;
     margin-bottom: 1.5rem;
     color: #495057;
 }
 
-/* Статус заказа */
+/* Статус заказа (Badge) */
 .order-detail-page .status-badge {
     display: inline-flex;
     align-items: center;
@@ -67,6 +77,7 @@
     margin-bottom: 2.5rem;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
+
 .order-detail-page .status-in-progress { background-color: #ffeeb3; color: #d69d00; }
 .order-detail-page .status-completed { background-color: #d4edda; color: #28a745; }
 .order-detail-page .status-canceled { background-color: #f8d7da; color: #dc3545; }
@@ -77,7 +88,9 @@
     margin-bottom: 0.8rem;
     color: #555;
 }
+
 .order-detail-page .order-info strong { color: #333; }
+
 .order-detail-page .order-info .meta-data {
     font-size: 0.95rem;
     color: #777;
@@ -86,19 +99,31 @@
     padding-top: 1rem;
 }
 
-/* Progress Bar */
-.order-detail-page .progress-section { margin: 3rem 0; }
+/*
+ * ========================================
+ * Прогресс-бар (Статус выполнения заказа)
+ * ========================================
+ */
+.order-detail-page .progress-section {
+    margin: 3rem auto;
+    width: 100%;
+}
+
 .order-detail-page .progress-timeline {
     display: flex;
+    flex-wrap: nowrap;
     justify-content: space-between;
     align-items: flex-start;
     position: relative;
-    padding: 0;
+    padding: 2rem 0; /* Добавляем отступы сверху и снизу для иконки */
     margin-bottom: 1.5rem;
+    /* Убираем overflow-x: hidden, чтобы не обрезалась тень и иконка */
+    width: 100%;
 }
+
 .order-detail-page .progress-timeline-line {
     position: absolute;
-    top: 30px;
+    top: 50%; /* Смещаем на центр по вертикали */
     left: 0;
     right: 0;
     height: 6px;
@@ -107,9 +132,10 @@
     z-index: 1;
     transform: translateY(-50%);
 }
+
 .order-detail-page .progress-line-fill {
     position: absolute;
-    top: 30px;
+    top: 50%;
     left: 0;
     height: 6px;
     background-color: #007bff;
@@ -118,59 +144,71 @@
     transform: translateY(-50%);
     transition: width 0.7s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
+
 .order-detail-page .progress-step {
     position: relative;
     z-index: 3;
-    flex: 1;
+    flex-grow: 1;
+    min-width: 50px;
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    padding-top: 50px;
+    padding-top: 40px;
+    /* Добавляем отступы, чтобы равномерно распределить шаги */
+    flex-basis: 0;
+    flex-grow: 1;
 }
+
 .order-detail-page .progress-step-icon-wrapper {
     position: absolute;
     top: 0;
     left: 50%;
     transform: translateX(-50%);
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
     background-color: #f8f9fa;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.8rem;
+    font-size: 1.5rem;
     color: #888;
-    border: 4px solid #ced4da;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-    transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease, transform 0.3s ease-out;
+    border: 3px solid #ced4da;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.4s ease;
 }
+
 .order-detail-page .progress-step.completed .progress-step-icon-wrapper {
     background-color: #007bff;
     color: #ffffff;
     border-color: #007bff;
     transform: translateX(-50%) scale(1.05);
 }
+
 .order-detail-page .progress-step.current .progress-step-icon-wrapper {
     background-color: #ffc107;
     color: #ffffff;
     border-color: #ffc107;
-    box-shadow: 0 0 0 8px rgba(255,193,7,0.3);
+    box-shadow: 0 0 0 8px rgba(255, 193, 7, 0.3);
     animation: pulse-ring 1.5s infinite;
 }
+
 @keyframes pulse-ring {
-    0% { box-shadow: 0 0 0 0 rgba(255,193,7,0.3); }
-    70% { box-shadow: 0 0 0 10px rgba(255,193,7,0); }
-    100% { box-shadow: 0 0 0 0 rgba(255,193,7,0); }
+    0% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.3); }
+    70% { box-shadow: 0 0 0 10px rgba(255, 193, 7, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0); }
 }
+
 .order-detail-page .progress-step-label {
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     color: #555;
     font-weight: 600;
-    margin-top: 1.2rem;
+    margin-top: 1rem;
     line-height: 1.3;
+    white-space: normal;
 }
+
 .order-detail-page .progress-step.completed .progress-step-label { color: #333; }
 
 /* Media Gallery */
@@ -181,11 +219,13 @@
     margin-bottom: 2.5rem;
     box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.05);
 }
+
 .order-detail-page .media-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 1.5rem;
 }
+
 .order-detail-page .media-item-card {
     background-color: #ffffff;
     border-radius: 10px;
@@ -194,10 +234,12 @@
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     position: relative;
 }
+
 .order-detail-page .media-item-card:hover {
     transform: translateY(-5px) scale(1.01);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
+
 .order-detail-page .media-item-card img,
 .order-detail-page .media-item-card video {
     width: 100%;
@@ -205,12 +247,14 @@
     object-fit: cover;
     display: block;
 }
+
 .order-detail-page .media-caption-body {
     padding: 1rem;
     text-align: center;
     font-size: 0.9rem;
     color: #6c757d;
 }
+
 .order-detail-page .no-media-message {
     text-align: center;
     padding: 3rem;
@@ -220,6 +264,7 @@
     font-style: italic;
     box-shadow: inset 0 1px 5px rgba(0,0,0,0.03);
 }
+
 .order-detail-page .play-icon {
     position: absolute;
     top: 50%;
@@ -234,10 +279,12 @@
     transition: opacity 0.3s ease;
     pointer-events: none;
 }
+
 .order-detail-page .media-item-card:hover .play-icon { opacity: 1; }
 
 /* Comments */
 .order-detail-page .comments-section { margin-top: 2.5rem; }
+
 .order-detail-page .comments-list {
     background-color: #ffffff;
     border-radius: 12px;
@@ -245,16 +292,23 @@
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
     margin-bottom: 2rem;
 }
+
 .order-detail-page .comment-item {
     border-bottom: 1px solid #e9ecef;
     padding-bottom: 1.5rem;
     margin-bottom: 1.5rem;
 }
+
 .order-detail-page .comment-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
 .order-detail-page .comment-header { display: flex; align-items: center; margin-bottom: 0.7rem; }
+
 .order-detail-page .comment-author { font-weight: 700; color: #333; font-size: 1.1rem; }
+
 .order-detail-page .comment-date { font-size: 0.85rem; color: #999; margin-left: 0.8rem; }
+
 .order-detail-page .comment-text { color: #495057; line-height: 1.6; font-size: 1rem; }
+
 .order-detail-page .no-comments-alert {
     padding: 2rem;
     background-color: #e9f5ff;
@@ -272,16 +326,19 @@
     padding: 2.5rem;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
 }
+
 .order-detail-page .form-control {
     border-radius: 8px;
     padding: 0.75rem 1rem;
     border: 1px solid #ced4da;
     transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
+
 .order-detail-page .form-control:focus {
     border-color: #80bdff;
     box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
 }
+
 .order-detail-page .btn-submit-form {
     background-color: #007bff;
     color: #fff;
@@ -294,15 +351,18 @@
     align-items: center;
     gap: 0.5rem;
 }
+
 .order-detail-page .btn-submit-form:hover {
     background-color: #0056b3;
     transform: translateY(-2px);
     color: #fff;
 }
+
 .order-detail-page .btn-submit-form:active { transform: translateY(0); }
 
 /* Review */
 .order-detail-page .review-section { margin-top: 2.5rem; }
+
 .order-detail-page .review-card {
     background-color: #ffffff;
     border-radius: 12px;
@@ -311,6 +371,7 @@
     margin-bottom: 2rem;
     border-left: 5px solid #28a745;
 }
+
 .order-detail-page .review-header {
     display: flex;
     align-items: center;
@@ -319,9 +380,13 @@
     border-bottom: 1px dashed #e9ecef;
     padding-bottom: 1rem;
 }
+
 .order-detail-page .star-rating .fas { color: #ffc107; }
+
 .order-detail-page .review-date { font-size: 0.9rem; color: #999; }
+
 .order-detail-page .review-text { font-size: 1.1rem; line-height: 1.7; color: #495057; }
+
 .order-detail-page .no-review-alert {
     padding: 2rem;
     background-color: #fff3cd;
@@ -332,22 +397,40 @@
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
+/*
+ * ========================================
+ * Media Queries (Адаптивность)
+ * ========================================
+ */
+@media (max-width: 991.98px) {
+    .order-detail-page .progress-timeline {
+        justify-content: flex-start;
+        flex-wrap: wrap;
+        gap: 1rem 0;
+    }
+}
+
 @media (max-width: 767.98px) {
     .order-detail-page h1 { font-size: 2rem; }
     .order-detail-page h2 { font-size: 1.8rem; }
     .order-detail-page h3 { font-size: 1.5rem; }
-    .order-detail-page .content-card { padding: 1.5rem; }
+    .order-detail-page .content-card { padding: 1.5rem; max-width: 100%; }
     .order-detail-page .status-badge { font-size: 0.95rem; padding: 0.5rem 1rem; }
     .order-detail-page .media-grid { grid-template-columns: 1fr; }
     .order-detail-page .comments-list,
     .order-detail-page .comment-form-card { padding: 1.5rem; }
 
+    /* Вертикальный режим для мобильных устройств */
     .order-detail-page .progress-timeline {
         flex-direction: column;
         align-items: flex-start;
         margin-left: 30px;
         width: calc(100% - 30px);
+        overflow-x: visible;
+        flex-wrap: nowrap;
+        padding-top: 0;
     }
+
     .order-detail-page .progress-timeline-line {
         width: 6px;
         height: calc(100% - 60px);
@@ -355,6 +438,7 @@
         top: 30px;
         transform: none;
     }
+
     .order-detail-page .progress-line-fill {
         width: 6px;
         height: 0;
@@ -362,6 +446,7 @@
         top: 30px;
         transform: none;
     }
+
     .order-detail-page .progress-step {
         flex-direction: row;
         text-align: left;
@@ -369,9 +454,23 @@
         align-items: center;
         width: 100%;
         padding-top: 0;
+        flex-basis: auto;
     }
+
     .order-detail-page .progress-step:last-child { margin-bottom: 0; }
-    .order-detail-page .progress-step-icon-wrapper { position: static; transform: none; margin-right: 1.5rem; flex-shrink: 0; }
+
+    .order-detail-page .progress-step-icon-wrapper {
+        position: static;
+        transform: none;
+        margin-right: 1.5rem;
+        flex-shrink: 0;
+    }
+
     .order-detail-page .progress-step.completed .progress-step-icon-wrapper { transform: none; }
-    .order-detail-page .progress-step-label { white-space: normal; flex-grow: 1; margin-top: 0; }
+
+    .order-detail-page .progress-step-label {
+        white-space: normal;
+        flex-grow: 1;
+        margin-top: 0;
+    }
 }

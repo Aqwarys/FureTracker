@@ -21,7 +21,30 @@ class Order(models.Model):
         verbose_name='Назначенные сотрудники',
         help_text='Имена сотрудников, работающих над заказом, их роли или любые другие связанные пометки.'
     )
-
+    stage_measurement_date = models.DateField(
+        verbose_name='Дата замера',
+        blank=True,
+        null=True,
+        help_text='Дата, когда был произведен замер.'
+    )
+    stage_design_date = models.DateField(
+        verbose_name='Дата утверждения дизайна',
+        blank=True,
+        null=True,
+        help_text='Дата, когда дизайн был утвержден.'
+    )
+    stage_technologist_date = models.DateField(
+        verbose_name='Дата работы технолога',
+        blank=True,
+        null=True,
+        help_text='Дата, когда технолог завершил свою часть работы.'
+    )
+    stage_completion_date = models.DateField(
+        verbose_name='Дата завершения заказа',
+        blank=True,
+        null=True,
+        help_text='Дата, когда заказ был завершен и готов к выдаче.'
+    )
 
     class Meta:
         verbose_name = 'Заказ'
