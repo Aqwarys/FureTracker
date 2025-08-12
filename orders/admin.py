@@ -12,7 +12,8 @@ admin.site.index_title = "Добро пожаловать в админ-пане
 
 class OrderMediaInline(admin.TabularInline):
     model = OrderMedia
-    extra = 1
+    extra = 0
+    max_num = 0
     fields = ('order_stage', 'file', 'uploaded_at', 'get_thumbnail_or_preview')
     readonly_fields = ('uploaded_at', 'get_thumbnail_or_preview',)
 

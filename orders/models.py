@@ -71,7 +71,7 @@ def order_media_upload_to(instance, filename):
 class OrderMedia(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='media_items')
     # КЛЮЧЕВОЕ ИЗМЕНЕНИЕ: Используем динамическую функцию для upload_to
-    file = models.FileField(upload_to=order_media_upload_to, blank=True, null=True)
+    file = models.FileField(upload_to=order_media_upload_to, blank=False, null=False)
     order_stage = models.ForeignKey(OrderStatus, on_delete=models.PROTECT)
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
