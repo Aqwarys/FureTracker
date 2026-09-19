@@ -1,0 +1,66 @@
+# Продакшен: gunicorn за nginx с HTTPS (Let's Encrypt) + ежемесячный бэкап базы.
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "5"
+
+services:
+  web:
+    restart: unless-stopped
+    expose:
+      - "8000"
+
+  db:
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMAIN: ${DOMAIN} # подставляется в nginx/templates/default.conf.template
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/templates:/etc/nginx/templates:ro
+      - certbot_etc:/etc/letsencrypt:ro
+      - certbot_www:/var/www/certbot:ro
+    depends_on:
+      - web
+    # Раз в 6 часов перечитываем конфиг, чтобы подхватить обновлённые сертификаты
+    command: /bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & exec /docker-entrypoint.sh nginx -g "daemon off;"'
+    logging: *default-logging
+
+  certbot:
+    image: certbot/certbot
+    restart: unless-stopped
+    volumes:
+      - certbot_etc:/etc/letsencrypt
+      - certbot_www:/var/www/certbot
+    # Проверка продления дважды в сутки (certbot продлевает, только когда до окончания < 30 дней)
+    entrypoint: /bin/sh -c 'trap exit TERM; while :; do certbot renew --webroot -w /var/www/certbot --quiet; sleep 12h & wait $${!}; done'
+    logging: *default-logging
+
+  db-backup:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      BACKUP_CRON: ${BACKUP_CRON:-0 3 1 * *}
+      BACKUP_KEEP: ${BACKUP_KEEP:-3}
+    volumes:
+      - ./docker/backup:/scripts:ro
+      - ./backups:/backups
+    entrypoint: ["sh", "/scripts/entrypoint.sh"]
+    depends_on:
+      db:
+        condition: service_healthy
+    logging: *default-logging
+
+volumes:
+  certbot_etc:
+  certbot_www:

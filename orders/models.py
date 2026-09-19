@@ -1,8 +1,22 @@
 # orders/models.py - UPDATED
 import os
+import secrets
 from django.db import models
+from django.urls import reverse
 from core.models import OrderStatus
 import uuid
+
+# Без похожих символов (0/O, 1/I/L), чтобы номер было легко продиктовать по телефону
+ORDER_NUMBER_ALPHABET = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'
+ORDER_NUMBER_LENGTH = 6
+
+
+def generate_order_number():
+    while True:
+        number = 'ORD-' + ''.join(secrets.choice(ORDER_NUMBER_ALPHABET) for _ in range(ORDER_NUMBER_LENGTH))
+        if not Order.objects.filter(order_number=number).exists():
+            return number
+
 
 class Order(models.Model):
     client_name = models.CharField(max_length=100, blank=False, null=False)
@@ -15,6 +29,12 @@ class Order(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
     is_completed = models.BooleanField(default=False)
+    is_public = models.BooleanField(
+        default=False,
+        verbose_name='Показывать в портфолио',
+        help_text='Если включено, заказ виден всем на сайте в разделе «Портфолио» (без комментариев). '
+                  'Иначе заказ открывается только по личной ссылке клиента.'
+    )
     assigned_employees = models.TextField(
         blank=True,
         null=True,
@@ -54,13 +74,16 @@ class Order(models.Model):
     def save(self, *args, **kwargs):
         self.is_completed = (self.order_status.name == 'Завершен')
 
-        if not self.pk and not self.order_number:
-            super().save(*args, **kwargs)
-            self.order_number = f"ORD-{self.pk:06d}"
+        if not self.order_number:
+            self.order_number = generate_order_number()
         super().save(*args, **kwargs)
 
     def __str__(self):
         return self.order_number or f"Заказ без номера ({self.pk})"
+
+    def get_absolute_url(self):
+        # Личная ссылка клиента. Её же открывает кнопка «Смотреть на сайте» в админке.
+        return reverse('orders:client_order_detail', args=[self.access_token])
 
 def order_media_upload_to(instance, filename):
     # Эта функция формирует путь, который будет сохранен в базе данных

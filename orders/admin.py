@@ -1,4 +1,5 @@
 # orders/admin.py
+from django.conf import settings
 from django.contrib import admin
 from django.utils.html import format_html
 from django.db.models import Count, Q
@@ -45,10 +46,11 @@ class ReviewInline(admin.TabularInline):
 class OrderAdmin(admin.ModelAdmin):
     list_display = (
         'order_number', 'order_status', 'client_name', 'client_phone',
-        'is_completed', 'assigned_employees_short', 'created_at', 'updated_at',
+        'is_completed', 'is_public', 'assigned_employees_short', 'created_at', 'updated_at',
         'get_media_count', 'get_comments_count', 'has_review_status'
     )
-    list_filter = ('order_status', 'is_completed', 'created_at')
+    list_filter = ('order_status', 'is_completed', 'is_public', 'created_at')
+    list_editable = ('is_public',)
     search_fields = (
         'order_number', 'description', 'client_name', 'client_email', 'client_phone',
         'order_status__name',
@@ -62,6 +64,10 @@ class OrderAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {
             'fields': ('order_number', 'order_status', 'description'),
+        }),
+        ('Доступ', {
+            'fields': ('client_link', 'is_public'),
+            'description': 'Отправьте клиенту личную ссылку — по ней он видит заказ без регистрации и может оставлять комментарии.',
         }),
         ('Информация о клиенте', {
             'fields': ('client_name', 'client_email', 'client_phone'),
@@ -82,7 +88,20 @@ class OrderAdmin(admin.ModelAdmin):
         }),
     )
 
-    readonly_fields = ('order_number', 'access_token', 'is_completed', 'created_at', 'updated_at')
+    readonly_fields = ('order_number', 'client_link', 'access_token', 'is_completed', 'created_at', 'updated_at')
+
+    def client_link(self, obj):
+        if not obj.pk:
+            return 'Ссылка появится после сохранения заказа'
+        url = f"{settings.SITE_URL}{obj.get_absolute_url()}"
+        return format_html(
+            '<input type="text" value="{}" readonly style="width: 100%; max-width: 560px;" onclick="this.select()"> '
+            '<button type="button" class="btn btn-sm btn-outline-primary mt-1" '
+            'onclick="navigator.clipboard.writeText(this.previousElementSibling.value); this.textContent=\'Скопировано\'">'
+            'Копировать</button>',
+            url,
+        )
+    client_link.short_description = 'Личная ссылка клиента'
 
     inlines = [OrderMediaInline, CommentInline, ReviewInline]
 

@@ -1,43 +1,27 @@
-FROM python:3.12.4-slim-bookworm
+FROM python:3.12-slim-bookworm
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
 
 WORKDIR /app
 
-ENV PYTHONUNBUFFERED 1
-ENV PYTHONDONTWRITEBYTECODE 1
-
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-    build-essential \
-    libpq-dev \
-    netcat-traditional \
-    && rm -rf /var/lib/apt/lists/*
-
-COPY requirements.txt /app/
+# Зависимости ставим отдельным слоем — при изменении кода они не переустанавливаются
+COPY requirements.txt .
 RUN pip install -r requirements.txt
 
+COPY . .
 
-# RUN printf '#!/bin/sh\n\n' > /app/entrypoint.sh \
-#     && printf 'set -e\n\n' >> /app/entrypoint.sh \
-#     && printf 'until nc -z db 5432; do\n' >> /app/entrypoint.sh \
-#     && printf '  echo "Waiting for the database..."\n' >> /app/entrypoint.sh \
-#     && printf '  sleep 2\n' >> /app/entrypoint.sh \
-#     && printf 'done\n\n' >> /app/entrypoint.sh \
-#     && printf 'echo "Running database migrations..."\n' >> /app/entrypoint.sh \
-#     && printf 'python manage.py migrate --noinput\n\n' >> /app/entrypoint.sh \
-#     && printf 'echo "Collecting static files..."\n' >> /app/entrypoint.sh \
-#     && printf 'python manage.py collectstatic --noinput\n\n' >> /app/entrypoint.sh \
-#     && printf 'exec "$@"\n' >> /app/entrypoint.sh \
-#     && chmod +x /app/entrypoint.sh
+# Статика собирается при сборке образа (отдаёт WhiteNoise). Настоящие ключи для этого не нужны.
+RUN SECRET_KEY=build-only DATABASE_URL=sqlite:////tmp/build.sqlite3 \
+    python manage.py collectstatic --noinput -v0
 
-COPY entrypoint.sh /app/entrypoint.sh
-RUN chmod +x /app/entrypoint.sh
-
-COPY . /app/
-
-RUN mkdir -p /var/log/django/
+RUN useradd --create-home --uid 1000 app
+USER app
 
 EXPOSE 8000
 
-ENTRYPOINT ["/app/entrypoint.sh"]
-
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "furetracker.wsgi:application"]
+ENTRYPOINT ["sh", "/app/entrypoint.sh"]
+# Количество воркеров и таймауты задаются через GUNICORN_CMD_ARGS в .env
+CMD ["gunicorn", "furetracker.wsgi:application", "--bind", "0.0.0.0:8000"]

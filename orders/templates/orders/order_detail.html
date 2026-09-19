@@ -90,7 +90,7 @@
             <h2>Фото и видеоотчет о процессе</h2>
 
             {# Новая форма для загрузки медиа #}
-            {% if request.user.is_staff %}
+            {% if order_media_form %}
             <div class="upload-media-form-container mt-4 mb-4">
                 <h3>Загрузить новое медиа</h3>
                 <form id="s3-upload-form" method="post" enctype="multipart/form-data"
@@ -189,7 +189,8 @@
             </div>
         {% endif %}
 
-        {# Секция Комментариев #}
+        {# Секция Комментариев — только на личной странице клиента #}
+        {% if is_client_view %}
         <div class="content-card comments-section">
             <h2 id="comments-section">Комментарии</h2>
             <div class="comments-list">
@@ -214,7 +215,7 @@
             {# Форма для добавления нового комментария #}
             <div class="comment-form-card mt-4">
                 <h3 class="mb-4">Оставить новый комментарий</h3>
-                <form method="post" action="{% url 'orders:public_order_detail' order.order_number %}#comments-section">
+                <form method="post" action="{{ request.path }}#comments-section">
                     {% csrf_token %}
                     <div class="mb-3">
                         <label for="{{ comment_form.author_name.id_for_label }}" class="form-label">Ваше имя:</label>
@@ -249,6 +250,7 @@
                 </form>
             </div>
         </div>
+        {% endif %}
 
     </div>
 </section>

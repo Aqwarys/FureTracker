@@ -3,13 +3,13 @@ import os
 import uuid
 import json
 import mimetypes
+from functools import wraps
 
 from django.conf import settings
-from django.http import JsonResponse, HttpResponseBadRequest
+from django.http import JsonResponse, Http404
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_protect
 from django.shortcuts import render, get_object_or_404, redirect
-from django.urls import reverse
 from django.core.paginator import Paginator
 from django.db import transaction
 
@@ -27,14 +27,29 @@ s3_client = boto3.client(
     's3',
     aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
     aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-    region_name=settings.AWS_S3_REGION_NAME
+    region_name=settings.AWS_S3_REGION_NAME,
+    endpoint_url=settings.AWS_S3_ENDPOINT_URL,
 )
+
+
+def staff_required_json(view_func):
+    """Пускает только сотрудников (is_staff). Для остальных — JSON 403, без редиректа на логин."""
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        if not (request.user.is_active and request.user.is_staff):
+            logger.warning(f"Попытка вызова {view_func.__name__} без прав сотрудника")
+            return JsonResponse({'error': 'Forbidden.'}, status=403)
+        return view_func(request, *args, **kwargs)
+    return wrapper
 
 
 def order_list(request):
 
     logger.info("Запрошено список заказов")
     qs = Order.objects.all().select_related('order_status')
+    # Посетители видят только заказы, отмеченные для портфолио; сотрудники — все
+    if not request.user.is_staff:
+        qs = qs.filter(is_public=True)
 
     search = request.GET.get('search', '').strip()
     if search:
@@ -59,11 +74,29 @@ def order_list(request):
 
 
 def order_detail(request, order_number):
+    """Публичная страница заказа (портфолио). Открывается, только если заказ отмечен is_public."""
     order = get_object_or_404(
         Order.objects.select_related('order_status'),
         order_number=order_number
     )
-    logger.info(f"Запрошена страница заказа {order_number}")
+    if not (order.is_public or request.user.is_staff):
+        raise Http404
+    logger.info(f"Запрошена публичная страница заказа {order_number}")
+
+    if request.method == 'POST':
+        # Комментировать можно только со страницы клиента
+        return redirect(request.path)
+
+    return _render_order(request, order, is_client_view=False)
+
+
+def client_order_detail(request, access_token):
+    """Страница заказа для клиента по личной ссылке. Без регистрации: знание ссылки = доступ."""
+    order = get_object_or_404(
+        Order.objects.select_related('order_status'),
+        access_token=access_token
+    )
+    logger.info(f"Запрошена клиентская страница заказа {order.order_number}")
 
     if request.method == 'POST':
         logger.info("Отправлен комментарий")
@@ -74,30 +107,34 @@ def order_detail(request, order_number):
             new_comment.order = order
             new_comment.save()
             logger.info("Комментарий сохранен")
-            return redirect(f"{reverse('orders:public_order_detail', args=[order.order_number])}#comments-section")
+            return redirect(f"{request.path}#comments-section")
     else:
-        comment_form = CommentForm()
+        comment_form = CommentForm(initial={'author_name': order.client_name})
 
-    order_media_form = OrderMediaForm()
+    return _render_order(request, order, is_client_view=True, comment_form=comment_form)
 
 
-    comments = order.comments.filter(moderated=True).order_by('created_at')
+def _render_order(request, order, is_client_view, comment_form=None):
     order_media = OrderMedia.objects.filter(order=order).select_related('order_stage').order_by('uploaded_at')
+    # Переписка с клиентом видна только на его личной странице, в портфолио её нет
+    comments = order.comments.filter(moderated=True).order_by('created_at') if is_client_view else None
     logger.info("Получены комментарии и медиа")
 
     all_order_statuses = OrderStatus.objects.all().order_by('order_index')
 
     context = {
         'order': order,
+        'is_client_view': is_client_view,
         'comments': comments,
         'comment_form': comment_form,
         'order_media': order_media,
         'all_order_statuses': all_order_statuses,
-        'order_media_form': order_media_form,
+        'order_media_form': OrderMediaForm() if request.user.is_staff else None,
     }
     return render(request, 'orders/order_detail.html', context)
 
 
+@staff_required_json
 @csrf_protect
 @require_POST
 def get_s3_presigned_url(request):
@@ -162,6 +199,7 @@ def get_s3_presigned_url(request):
         return JsonResponse({'error': 'An unexpected server error occurred.'}, status=500)
 
 
+@staff_required_json
 @csrf_protect
 @require_POST
 def complete_s3_upload(request):
@@ -183,6 +221,12 @@ def complete_s3_upload(request):
         except ValueError:
             logger.error("Неверный формат ID этапа заказа")
             return JsonResponse({'error': 'Invalid order_stage_id format.'}, status=400)
+
+        # Путь должен быть тем, что выдал get_s3_presigned_url для этого заказа, а не произвольным ключом в бакете
+        expected_prefix = f"orders/{order_number}/"
+        if not s3_file_path.startswith(expected_prefix) or '..' in s3_file_path:
+            logger.error(f"Недопустимый путь файла {s3_file_path} для заказа {order_number}")
+            return JsonResponse({'error': 'Invalid s3_file_path.'}, status=400)
 
         with transaction.atomic():
             order = get_object_or_404(Order, order_number=order_number)

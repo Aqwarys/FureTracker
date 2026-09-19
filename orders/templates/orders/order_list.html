@@ -232,6 +232,7 @@
                             <div class="order-card">
                                 <div class="card-meta-top">
                                     <span class="date">{{ order.created_at|date:"d M Y" }}</span>
+                                    {% if not order.is_public %}<span class="badge bg-secondary ms-2" title="Виден только сотрудникам и клиенту по личной ссылке">Не в портфолио</span>{% endif %}
                                 </div>
                                 <h5 class="order-card-title">Заказ {{ order.order_number }}</h5>
                                 <p class="order-card-description">

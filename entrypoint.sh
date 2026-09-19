@@ -1,16 +1,10 @@
 #!/bin/sh
-
 set -e
 
-until nc -z db 5432; do
-  echo "Waiting for the database..."
-  sleep 2
-done
-
-echo "Running database migrations..."
-python manage.py migrate --noinput
-
-echo "Collecting static files..."
-python manage.py collectstatic --noinput
+# База уже готова: compose запускает web только после healthcheck контейнера db
+if [ "${RUN_MIGRATIONS:-true}" = "true" ]; then
+    echo "Running database migrations..."
+    python manage.py migrate --noinput
+fi
 
 exec "$@"

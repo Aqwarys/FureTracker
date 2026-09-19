@@ -14,9 +14,21 @@ if not SECRET_KEY:
     raise ImproperlyConfigured("SECRET_KEY is not set.")
 
 DEBUG = os.getenv('DJANGO_DEBUG', 'False').lower() == 'true'
-ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '').split(',')
+ALLOWED_HOSTS = [host.strip() for host in os.getenv('DJANGO_ALLOWED_HOSTS', '').split(',') if host.strip()]
+# localhost нужен для healthcheck внутри контейнера
+ALLOWED_HOSTS += [host for host in ('localhost', '127.0.0.1') if host not in ALLOWED_HOSTS]
 
-CSRF_TRUSTED_ORIGINS = [f"https://{host}" for host in ALLOWED_HOSTS if host]
+CSRF_TRUSTED_ORIGINS = [f"https://{host}" for host in ALLOWED_HOSTS]
+if DEBUG:
+    CSRF_TRUSTED_ORIGINS += [f"http://{host}:8000" for host in ALLOWED_HOSTS]
+
+# Публичный адрес сайта — используется для клиентских ссылок в админке
+SITE_URL = os.getenv('SITE_URL', '').rstrip('/')
+
+# Django стоит за nginx, который терминирует HTTPS
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
 # -------------------
 # APPLICATIONS
 # -------------------
@@ -43,6 +55,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -142,20 +155,10 @@ LOGGING = {
 
     # 3. Хендлеры: Куда отправлять логи
     'handlers': {
-        'console': { # Вывод логов в консоль (stdout/stderr)
+        'console': { # Вывод логов в stdout — в Docker их собирает `docker compose logs` (ротация настроена в compose)
             'level': 'INFO', # Минимальный уровень для вывода в консоль
-            'filters': ['require_debug_true'], # Только при DEBUG=True
             'class': 'logging.StreamHandler',
-            'formatter': 'simple',
-        },
-        'file': { # Вывод логов в файл (для продакшена)
-            'level': 'INFO', # Минимальный уровень для записи в файл
-            'filters': ['require_debug_false'], # Только при DEBUG=False
-            'class': 'logging.handlers.RotatingFileHandler', # Ротация файла, чтобы не рос бесконечно
-            'filename': '/var/log/django/furetracker.log', # Путь к файлу логов на сервере
-            'maxBytes': 1024 * 1024 * 5, # 5 MB на файл
-            'backupCount': 5, # Хранить 5 старых файлов логов
-            'formatter': 'verbose',
+            'formatter': 'simple' if DEBUG else 'verbose',
         },
         'mail_admins': { # Отправка ERROR/CRITICAL логов администраторам по почте
             'level': 'ERROR',
@@ -167,33 +170,33 @@ LOGGING = {
     # 4. Логгеры: Кто генерирует логи и какие хендлеры их обрабатывают
     'loggers': {
         'django': { # Логгер для Django-сообщений (SQL-запросы, ошибки и т.д.)
-            'handlers': ['console', 'file'], # Отправлять и в консоль, и в файл
+            'handlers': ['console'],
             'level': 'INFO', # Начинаем с INFO, можно поднять до DEBUG для детальной отладки
             'propagate': False, # Не передавать логи выше по иерархии (чтобы не дублировались)
         },
         'django.request': { # Логгер для HTTP-запросов и ошибок (4xx/5xx)
-            'handlers': ['console', 'file', 'mail_admins'],
+            'handlers': ['console', 'mail_admins'],
             'level': 'ERROR', # Отправляем ошибки запросов администраторам
             'propagate': False,
         },
         'orders': { # Логгер для вашего приложения 'orders'
-            'handlers': ['console', 'file'],
+            'handlers': ['console'],
             'level': 'INFO', # Уровень для вашего приложения
             'propagate': False,
         },
         # Добавьте логгеры для других ваших приложений ('consultations', 'main', 'core')
         'consultations': {
-            'handlers': ['console', 'file'],
+            'handlers': ['console'],
             'level': 'INFO',
             'propagate': False,
         },
         'core': {
-            'handlers': ['console', 'file'],
+            'handlers': ['console'],
             'level': 'INFO',
             'propagate': False,
         },
         'main': {
-            'handlers': ['console', 'file'],
+            'handlers': ['console'],
             'level': 'INFO',
             'propagate': False,
         },
@@ -201,7 +204,7 @@ LOGGING = {
 
     # 5. Root Logger: Логгер по умолчанию, если сообщение не обрабатывается специфичным логгером
     'root': {
-        'handlers': ['console', 'file'],
+        'handlers': ['console'],
         'level': 'WARNING', # По умолчанию все остальные сообщения выше WARNING
     }
 }
@@ -219,10 +222,12 @@ AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
 AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME', 'eu-central-1') # Укажите ваш регион S3
-AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com' if AWS_STORAGE_BUCKET_NAME else None
+# Для S3-совместимых хранилищ (Cloudflare R2, PS.kz и т.д.) — адрес их API. Для AWS оставить пустым.
+AWS_S3_ENDPOINT_URL = os.environ.get('AWS_S3_ENDPOINT_URL') or None
+# Публичный домен бакета. Если пуст — ссылки на медиа подписываются и живут AWS_QUERYSTRING_EXPIRE секунд
+# (бакет может быть приватным). Если задан — ссылки постоянные, бакет должен быть публичным на чтение.
+AWS_S3_CUSTOM_DOMAIN = os.environ.get('AWS_S3_CUSTOM_DOMAIN') or None
 
-# Настройки для подписанных URL (если вы их используете для доступа к медиа)
-# Если ваши медиафайлы должны быть публично доступны без подписанных URL, установите AWS_QUERYSTRING_AUTH = False
 AWS_QUERYSTRING_AUTH = True
 AWS_QUERYSTRING_EXPIRE = 3600 # Срок действия URL в секундах (например, 1 час)
 
@@ -232,9 +237,10 @@ STORAGES = {
         "OPTIONS": {
             "bucket_name": AWS_STORAGE_BUCKET_NAME,
             "region_name": AWS_S3_REGION_NAME,
+            "endpoint_url": AWS_S3_ENDPOINT_URL,
             "querystring_auth": AWS_QUERYSTRING_AUTH,
             "querystring_expire": AWS_QUERYSTRING_EXPIRE,
-            "custom_domain": AWS_S3_CUSTOM_DOMAIN, # Используем общий кастомный домен
+            "custom_domain": AWS_S3_CUSTOM_DOMAIN,
             "url_protocol": "https:", # Использовать HTTPS
             "location": "media", # <-- ЭТО ОЧЕНЬ ВАЖНО: Все медиафайлы будут в папке media/
             "object_parameters": {
@@ -246,26 +252,14 @@ STORAGES = {
             },
         },
     },
-    "staticfiles": { # Это хранилище для ваших статических файлов
-        "BACKEND": "storages.backends.s3.S3Storage",
-        "OPTIONS": {
-            "bucket_name": AWS_STORAGE_BUCKET_NAME,
-            "region_name": AWS_S3_REGION_NAME,
-            "querystring_auth": False, # Статические файлы обычно публичны и не требуют подписанных URL
-            "custom_domain": AWS_S3_CUSTOM_DOMAIN, # Используем общий кастомный домен
-            "url_protocol": "https:",
-            "location": "static", # <-- ЭТО ОЧЕНЬ ВАЖНО: Все статические файлы будут в папке static/
-            "object_parameters": {
-                "CacheControl": "max-age=86400",
-            },
-        },
+    # Статика (css/js/картинки сайта) отдаётся самим Django через WhiteNoise — бакет и ключи для неё не нужны
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },
 }
 
-MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/' if AWS_S3_CUSTOM_DOMAIN else '/media/'
-STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/' if AWS_S3_CUSTOM_DOMAIN else '/static/'
+STATIC_URL = '/static/'
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
